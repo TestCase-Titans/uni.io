@@ -4,21 +4,39 @@ import nodemailer from "nodemailer";
 import db from "../config/db.js";
 
 export const register = async (req, res) => {
-  const { name, username, email, password } = req.body;
+  const { name, username, email, password, role } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
-    const query =
-      "INSERT INTO users (name, username, email, password, isBanned, isSysAdmin, isVerified, verificationToken) VALUES (?, ?, ?, ?, FALSE, FALSE, FALSE, ?)";
+    let clubAdminStatus = "never_applied";
+    if (role === "ClubAdmin") {
+      clubAdminStatus = "pending";
+    }
+
+    const userQuery =
+      "INSERT INTO users (name, username, email, password, isBanned, isSysAdmin, clubAdminStatus, isVerified, verificationToken) VALUES (?, ?, ?, ?, FALSE, FALSE, ?, FALSE, ?)";
 
     db.query(
-      query,
-      [name, username, email, hashedPassword, verificationToken],
+      userQuery,
+      [name, username, email, hashedPassword, clubAdminStatus, verificationToken],
       (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
+
+        const userId = result.insertId;
+
+        if (role === "ClubAdmin") {
+          const appQuery =
+            "INSERT INTO clubAdminApplications (userId, status, appliedAt, reviewedBy, reviewedAt) VALUES (?, 'pending', NOW(), NULL, NULL)";
+          db.query(appQuery, [userId], (err2) => {
+            if (err2)
+              console.error(
+                "Failed to insert into clubAdminApplications:",
+                err2.message
+              );
+          });
+        }
 
         sendVerificationEmail(email, verificationToken);
 
