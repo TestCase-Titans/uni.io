@@ -38,18 +38,18 @@ export function HomePage({ onNavigate }: HomePageProps) {
         
         <div className="relative max-w-7xl mx-auto text-center animate-slide-up">
           {/* Fun announcement badge */}
-          <div className="inline-flex items-center space-x-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full text-xl font-medium mb-8 animate-bounce-gentle">
+          <div className="inline-flex items-center space-x-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full text-l font-medium mb-8 animate-bounce-gentle">
             <Sparkles className="h-4 w-4" />
             <span>Your campus events just got better!</span>
             <Sparkles className="h-4 w-4" />
           </div>
 
-          <h1 className="redis-heading-xl bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-6">
-            YOUR CAMPUS
+          <h1 className="redis-heading-lg bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-6">
+            EVERY EVENT
             <br />
-            <span className="text-destructive redis-heading-xl">EVENTS ARE ABOUT</span>
+            <span className="text-destructive redis-heading-lg">EVERY CLUB</span>
             <br />
-            TO GET EPIC
+            ONE PLACE
           </h1>
           
           <p className="redis-subtitle text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
@@ -200,7 +200,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   <div>
                     <h4 className="font-bold mb-2 text-lg">INSTANT DISCOVERY</h4>
                     <p className="text-muted-foreground">
-                      Find events that match your vibe with lightning-fast search and smart filters
+                      Find events that match your vibe with fast search and filters
                     </p>
                   </div>
                 </div>
@@ -277,9 +277,6 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-destructive rounded-md flex items-center justify-center mr-3">
-                  <span className="text-destructive-foreground font-bold text-lg">E</span>
-                </div>
                 <span className="redis-heading-sm text-xl">Uni.io</span>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -311,7 +308,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© 2024 Uni.io. All rights reserved. <span className="text-destructive">Built for the future of campus events.</span></p>
+            <p>© 2025 Uni.io. All rights reserved. <span className="text-destructive">Built for the future of campus events.</span></p>
           </div>
         </div>
       </footer>
