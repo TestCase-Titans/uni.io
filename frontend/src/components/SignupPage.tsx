@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import axios from "axios";
+import apiClient from "../utils/api";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Loader2, User, Shield, Zap, Rocket, Star } from "lucide-react";
@@ -27,7 +27,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<UserRole>("student");
   const [error, setError] = useState("");
-  const { signup, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,9 +64,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
         role,
       };
 
-      const API_PREFIX = "http://localhost:5000/api/v1";
-
-      const result = await axios.post(API_PREFIX + "/auth/register", userData);
+      const result = await apiClient.post("/auth/register", userData);
 
       if (result.status === 201) {
         onNavigate(
@@ -82,7 +80,6 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Background decoration */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="absolute top-20 left-10 w-32 h-32 bg-destructive/10 rounded-full blur-3xl animate-pulse-glow"></div>
       <div className="absolute bottom-20 right-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse-glow"></div>
@@ -90,14 +87,9 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
       <div className="relative w-full max-w-md animate-slide-up">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-destructive rounded-xl flex items-center justify-center mr-4 animate-bounce-gentle">
-              <span className="text-destructive-foreground font-black text-3xl">
-                E
-              </span>
-            </div>
-            <span className="redis-heading-md">EVENTIFY</span>
+            <span className="redis-heading-md">UNI.IO</span>
           </div>
-          <h1 className="redis-heading-md mb-4">
+          <h1 className="redis-heading-sm mb-4">
             JOIN THE
             <br />
             <span className="text-destructive">REVOLUTION</span>
@@ -235,9 +227,6 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                         >
                           STUDENT
                         </Label>
-                        <p className="text-xs text-muted-foreground font-medium">
-                          Discover and join amazing events on campus
-                        </p>
                       </div>
                       <Star className="h-4 w-4 text-yellow-500" />
                     </div>
@@ -254,9 +243,6 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                         >
                           CLUB ADMIN
                         </Label>
-                        <p className="text-xs text-muted-foreground font-medium">
-                          Create and manage epic events for your club
-                        </p>
                       </div>
                       <Rocket className="h-4 w-4 text-destructive" />
                     </div>

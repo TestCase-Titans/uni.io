@@ -9,11 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import apiClient from "../utils/api";
 import { Checkbox } from "./ui/checkbox";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Loader2, Zap, ArrowRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import axios from "axios";
 
 interface LoginPageProps {
   onNavigate: (page: string) => void;
@@ -36,20 +36,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     }
 
     try {
-      const userData = {
-        email,
-        password,
-      };
-
-      const API_PREFIX = "http://localhost:5000/api/v1";
-
-      const result = await axios.post(API_PREFIX + "/auth/login", userData);
-      if (result.status === 200) {
-        console.log("Login successful:", result.data);
-        onNavigate("events");
-      } else {
-        setError(result.data || "Invalid email or password");
-      }
+      const result = await login(email, password);
     } catch (err) {
       setError("An error occurred. Please try again.");
     }
@@ -57,7 +44,6 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Background decoration */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="absolute top-20 left-10 w-32 h-32 bg-destructive/10 rounded-full blur-3xl animate-pulse-glow"></div>
       <div className="absolute bottom-20 right-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse-glow"></div>
@@ -65,11 +51,6 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
       <div className="relative w-full max-w-md animate-slide-up">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-destructive rounded-xl flex items-center justify-center mr-4 animate-bounce-gentle">
-              <span className="text-destructive-foreground font-black text-3xl">
-                E
-              </span>
-            </div>
             <span className="redis-heading-md">Uni.io</span>
           </div>
           <h1 className="redis-heading-md mb-4">
