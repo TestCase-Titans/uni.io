@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 export const getAllUsers = (req, res) => {
   const query =
-    "SELECT id, name, username, email, isBanned, isSysAdmin FROM users";
+    "SELECT id, name, username, email, isBanned, isSysAdmin, isVerified FROM users";
 
   db.query(query, (err, users) => {
     if (err) {
