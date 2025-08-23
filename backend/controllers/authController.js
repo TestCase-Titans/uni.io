@@ -14,15 +14,20 @@ export const register = async (req, res) => {
     const query =
       "INSERT INTO users (name, username, email, password, isBanned, isSysAdmin, isVerified, verificationToken) VALUES (?, ?, ?, ?, FALSE, FALSE, FALSE, ?)";
 
-    db.query(query, [name, username, email, hashedPassword, verificationToken], (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
+    db.query(
+      query,
+      [name, username, email, hashedPassword, verificationToken],
+      (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
 
-      sendVerificationEmail(email, verificationToken);
+        sendVerificationEmail(email, verificationToken);
 
-      res.status(201).json({
-        message: "User registered. Please check your email to verify your account.",
-      });
-    });
+        res.status(201).json({
+          message:
+            "User registered. Please check your email to verify your account.",
+        });
+      }
+    );
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -76,9 +81,8 @@ function sendVerificationEmail(email, token) {
     },
   });
 
-
-  const verificationLink = `http://localhost:5000/verify-email?token=${token}`;
-  console.log(`Verification link: http://localhost:5000/verify-email?token=${token}`);
+  const verificationLink = `http://localhost:5000/api/v1/auth/verify-email?token=${token}`;
+  console.log(`Verification link: ${verificationLink}`);
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
