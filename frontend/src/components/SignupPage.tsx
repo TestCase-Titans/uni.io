@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Loader2, User, Shield, Zap, Rocket, Star } from "lucide-react";
 import { useAuth, type UserRole } from "../contexts/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
 
 interface SignupPageProps {
   onNavigate: (page: string) => void;
@@ -70,6 +71,17 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
         onNavigate(
           role === "student" ? "student-dashboard" : "admin-dashboard"
         );
+        toast.info("Verification email sent, Check your inbox!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          //  transition: Bounce,
+        });
       } else {
         setError(result.data || "Failed to create account. Please try again.");
       }
