@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from './ui/button'
 import { ThemeToggle } from './ThemeToggle'
 import { Menu, X, Zap } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+
 
 interface NavigationProps {
   onNavigate: (page: string) => void
@@ -32,18 +33,16 @@ export function Navigation({ onNavigate, currentPage }: NavigationProps) {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border/50">
+    <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border/50 [&_button]:relative [&_button]:overflow-hidden [&_button]:before:content-[''] [&_button]:before:absolute [&_button]:before:top-0 [&_button]:before:left-0 [&_button]:before:w-full [&_button]:before:h-full [&_button]:before:bg-[radial-gradient(circle_at_var(--x,0px)_var(--y,0px),rgba(0,255,255,0.2)_0%,transparent_70%)] [&_button]:before:opacity-[var(--hologram-opacity,0)] [&_button]:before:transition-opacity [&_button]:before:duration-300 [&_button]:before:pointer-events-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div 
             className="flex items-center cursor-pointer group"
             onClick={() => handleNavigation('home')}
           >
-            <div className="w-10 h-10 bg-destructive rounded-lg flex items-center justify-center mr-1 group-hover:scale-110 transition-transform duration-200">
-              <span className="text-destructive-foreground font-black text-xl">U</span>
-            </div>
-            <span className="redis-heading-sm text-2xl group-hover:text-destructive transition-colors">ni.io</span>
+            
+            <span className="redis-heading-sm text-2xl group-hover:text-destructive transition-colors">Uni.io</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -52,9 +51,43 @@ export function Navigation({ onNavigate, currentPage }: NavigationProps) {
               <button
                 key={item.id}
                 onClick={() => handleNavigation(item.id)}
-                className={`text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:text-destructive hover:scale-105 ${
-                  currentPage === item.id ? 'text-destructive border-b-2 border-destructive pb-1' : 'text-muted-foreground'
+                className={`relative overflow-hidden text-sm font-bold uppercase tracking-wide transition-all duration-300 ${
+                  currentPage === item.id 
+                    ? 'text-destructive border-b-2 border-destructive pb-1' 
+                    : 'text-muted-foreground hover:text-cyan-400 hover:scale-105'
                 }`}
+                onMouseEnter={(e) => {
+                  const button = e.currentTarget;
+                  const rect = button.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  button.style.setProperty('--x', `${x}px`);
+                  button.style.setProperty('--y', `${y}px`);
+                }}
+                onMouseMove={(e) => {
+                  const button = e.currentTarget;
+                  const rect = button.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  button.style.setProperty('--x', `${x}px`);
+                  button.style.setProperty('--y', `${y}px`);
+                  button.style.setProperty('--hologram-opacity', '1');
+                  button.style.setProperty('--hologram-transform', 'translateY(0)');
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.setProperty('--hologram-opacity', '0');
+                  e.currentTarget.style.setProperty('--hologram-transform', 'translateY(100%)');
+                }}
+                style={{
+                  '--x': '0px',
+                  '--y': '0px',
+                  '--hologram-opacity': '0',
+                  '--hologram-transform': 'translateY(100%)',
+                  ...(item.label === currentPage ? {
+                    color: 'hsl(var(--primary))',
+                    borderBottom: '2px solid hsl(var(--primary))'
+                  } : {})
+                } as React.CSSProperties}
               >
                 {item.label}
               </button>
@@ -67,8 +100,8 @@ export function Navigation({ onNavigate, currentPage }: NavigationProps) {
             {user ? (
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <div className="text-sm font-bold">{user.name}</div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wide">
+                  <div className="text-base font-bold">{user.name}</div>
+                  <div className="text-sm text-muted-foreground uppercase tracking-wide">
                     {user.role}
                   </div>
                 </div>

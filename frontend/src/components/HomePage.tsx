@@ -38,7 +38,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
         
         <div className="relative max-w-7xl mx-auto text-center animate-slide-up">
           {/* Fun announcement badge */}
-          <div className="inline-flex items-center space-x-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full text-sm font-medium mb-8 animate-bounce-gentle">
+          <div className="inline-flex items-center space-x-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full text-xl font-medium mb-8 animate-bounce-gentle">
             <Sparkles className="h-4 w-4" />
             <span>Your campus events just got better!</span>
             <Sparkles className="h-4 w-4" />
