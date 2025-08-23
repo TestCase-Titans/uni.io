@@ -1,134 +1,98 @@
-'use client'
-
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { api, type ApiError } from '../utils/api'
-
-export type UserRole = 'student' | 'admin'
+// src/contexts/AuthContext.tsx
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
+import apiClient from "../utils/api";
+import { LoadingScreen } from "../components/LoadingScreen";
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  role: UserRole
+  id: number;
+  name: string;
+  email: string;
+  role: string;
 }
 
+// Define the shape of the context value
 interface AuthContextType {
-  user: User | null
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  signup: (name: string, email: string, password: string, role: UserRole) => Promise<{ success: boolean; error?: string }>
-  logout: () => void
-  isLoading: boolean
+  user: User | null;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export type UserRole = "student" | "ClubAdmin" | "admin";
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+const AuthContext = createContext<AuthContextType | null>(null);
 
-  useEffect(() => {
-    // Check for stored user and token on mount
-    const initializeAuth = async () => {
-      try {
-        const storedUser = localStorage.getItem('Uni.io-user')
-        const storedToken = localStorage.getItem('Uni.io-token')
-        
-        if (storedUser && storedToken) {
-          // Try to validate the token
-          try {
-            const { user: validatedUser } = await api.validateToken()
-            setUser(validatedUser)
-          } catch (error) {
-            // Token is invalid, clear storage
-            console.log('Invalid token, clearing storage')
-            localStorage.removeItem('Uni.io-user')
-            localStorage.removeItem('Uni.io-token')
-          }
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // Start loading initially
 
-    initializeAuth()
-  }, [])
-
-  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true)
-    
+  const login = async (email: string, password: string) => {
     try {
-      const response = await api.login({ email, password })
-      
-      // Store user and token
-      setUser(response.user)
-      localStorage.setItem('Uni.io-user', JSON.stringify(response.user))
-      localStorage.setItem('Uni.io-token', response.token)
-      
-      return { success: true }
-    } catch (error) {
-      const apiError = error as ApiError
-      const errorMessage = apiError.message || 'Login failed. Please try again.'
-      
-      return { 
-        success: false, 
-        error: errorMessage 
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
+      const userData = {
+        email,
+        password,
+      };
 
-  const signup = async (name: string, email: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true)
-    
-    try {
-      const response = await api.signup({ name, email, password, role })
-      
-      // Store user and token
-      setUser(response.user)
-      localStorage.setItem('Uni.io-user', JSON.stringify(response.user))
-      localStorage.setItem('Uni.io-token', response.token)
-      
-      return { success: true }
+      const response = await apiClient.post("/auth/login", userData);
+      setUser(response.data.user); // Set user state on successful login
+      return response.data.user;
     } catch (error) {
-      const apiError = error as ApiError
-      const errorMessage = apiError.message || 'Signup failed. Please try again.'
-      
-      return { 
-        success: false, 
-        error: errorMessage 
-      }
-    } finally {
-      setIsLoading(false)
+      console.error("Login failed:", error);
+      setUser(null);
+      throw error; // Re-throw error so login form can catch it
     }
-  }
+  };
 
   const logout = async () => {
     try {
-      await api.logout()
+      await apiClient.get("/auth/logout");
+      setUser(null); // Clear user state
     } catch (error) {
-      console.error('Error during logout:', error)
-    } finally {
-      // Always clear local storage
-      setUser(null)
-      localStorage.removeItem('Uni.io-user')
-      localStorage.removeItem('Uni.io-token')
+      console.error("Logout failed:", error);
     }
-  }
+  };
 
+  // This function checks if a valid cookie session exists on the server
+  const checkAuthStatus = async () => {
+    setIsLoading(true);
+    try {
+      // Create an endpoint on your backend that returns the user if they have a valid session
+      const response = await apiClient.get("/auth/status");
+      setUser(response.data.user);
+    } catch (error) {
+      // If the request fails (e.g., 401 Unauthorized), it means no valid session
+      setUser(null);
+    } finally {
+      setIsLoading(false); // Stop loading once the check is complete
+    }
+  };
+
+  // Run the auth status check when the provider is first mounted
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const value = { user, isLoading, login, logout };
+
+  // Render a loading screen while checking auth, so the app doesn't flicker
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isLoading }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {isLoading ? <LoadingScreen /> : children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+// Custom hook to easily use the auth context in other components
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
-}
+  return context;
+};
