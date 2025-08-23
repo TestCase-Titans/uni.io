@@ -1,10 +1,12 @@
+import React from 'react';
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { ArrowLeft, Download, Trophy, Calendar } from 'lucide-react'
 import { useData } from '../contexts/DataContext'
 import { useAuth } from '../contexts/AuthContext'
-import { toast } from 'sonner@2.0.3'
+import { toast } from 'sonner'
+import html2canvas from 'html2canvas'
 
 interface CertificatesPageProps {
   onNavigate: (page: string) => void
@@ -26,9 +28,48 @@ export function CertificatesPage({ onNavigate }: CertificatesPageProps) {
     return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
   }
 
-  const handleDownloadCertificate = (eventTitle: string) => {
-    // In a real app, this would generate and download a PDF certificate
-    toast.success(`Certificate for "${eventTitle}" downloaded!`)
+  const handleDownloadCertificate = async (eventTitle: string, eventId: string) => {
+    try {
+      const element = document.getElementById(`certificate-${eventId}`);
+      if (!element) {
+        toast.error('Certificate element not found');
+        return;
+      }
+
+      // Temporarily hide the download button to avoid capturing it
+      const buttons = element.querySelectorAll('button');
+      buttons.forEach(btn => {
+        btn.style.visibility = 'hidden';
+      });
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: null,
+        allowTaint: true,
+        scrollY: -window.scrollY
+      });
+
+      // Restore button visibility
+      buttons.forEach(btn => {
+        btn.style.visibility = 'visible';
+      });
+
+      // Create download link
+      const link = document.createElement('a');
+      const fileName = `${eventTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_certificate.png`;
+      link.download = fileName;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success(`"${eventTitle}" সনদপত্র ডাউনলোড সম্পন্ন হয়েছে!`);
+    } catch (error) {
+      console.error('Error generating certificate:', error);
+      toast.error('সনদপত্র ডাউনলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+    }
   }
 
   return (
@@ -45,10 +86,20 @@ export function CertificatesPage({ onNavigate }: CertificatesPageProps) {
             Back to Dashboard
           </Button>
           
-          <h1 className="text-3xl mb-2">My Certificates</h1>
-          <p className="text-muted-foreground">
-            Download certificates for events you've completed
-          </p>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 className="text-3xl mb-1">My Certificates</h1>
+              <p className="text-muted-foreground">
+                Download certificates for events you've completed
+              </p>
+            </div>
+            <Button 
+              onClick={() => onNavigate('auto-certificate-generator')}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Generate New Certificate
+            </Button>
+          </div>
         </div>
 
         {/* Certificates */}
@@ -75,7 +126,7 @@ export function CertificatesPage({ onNavigate }: CertificatesPageProps) {
 
             <div className="grid gap-6 md:grid-cols-2">
               {completedEvents.map((event) => (
-                <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                <Card id={`certificate-${event.id}`} key={event.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
                       <Badge className={getCategoryColor(event.category)}>
@@ -104,10 +155,10 @@ export function CertificatesPage({ onNavigate }: CertificatesPageProps) {
                       <div className="pt-2 border-t">
                         <Button 
                           className="w-full" 
-                          onClick={() => handleDownloadCertificate(event.title)}
+                          onClick={() => handleDownloadCertificate(event.title, event.id)}
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Download Certificate (PDF)
+PNG হিসেবে ডাউনলোড করুন
                         </Button>
                       </div>
                     </div>
