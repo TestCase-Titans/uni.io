@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import apiClient from "../utils/api";
 import { LoadingScreen } from "../components/LoadingScreen";
+import { ToastContainer, toast } from "react-toastify";
 
 export interface User {
   id: number;
@@ -45,6 +46,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Login failed:", error);
       setUser(null);
+
+      //  console.log(error.response?.data?.message);
+      toast.warn(error.response?.data?.message || "An error occured", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        //  transition: Bounce,
+      });
+
       throw error; // Re-throw error so login form can catch it
     }
   };
