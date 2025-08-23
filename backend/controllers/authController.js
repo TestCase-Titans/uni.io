@@ -81,7 +81,8 @@ function sendVerificationEmail(email, token) {
     },
   });
 
-  const verificationLink = `http://localhost:5000/api/v1/auth/verify-email?token=${token}`;
+  const urlPrefix = process.env.URL_PREFIX;
+  const verificationLink = `${urlPrefix}/auth/verify-email?token=${token}`;
   console.log(`Verification link: ${verificationLink}`);
 
   const mailOptions = {
