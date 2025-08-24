@@ -1,15 +1,9 @@
-// API configuration and types
-export interface LoginRequest {
-  email: string
-  password: string
-}
+import axios from "axios";
 
-export interface SignupRequest {
-  name: string
-  email: string
-  password: string
-  role: 'student' | 'admin'
-}
+const apiClient = axios.create({
+  baseURL: "http://localhost:5000/api/v1",
+  withCredentials: true,
+});
 
 export interface AuthResponse {
   user: {
@@ -174,4 +168,5 @@ export const mockAuthApi = {
 export const api = import.meta.env.DEV && !import.meta.env.VITE_API_BASE_URL 
   ? mockAuthApi 
   : authApi
+
 

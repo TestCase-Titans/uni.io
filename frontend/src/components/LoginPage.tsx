@@ -1,60 +1,56 @@
-import { useState } from 'react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Checkbox } from './ui/checkbox'
-import { Alert, AlertDescription } from './ui/alert'
-import { Loader2, Zap, ArrowRight } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import apiClient from "../utils/api";
+import { Checkbox } from "./ui/checkbox";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Loader2, Zap, ArrowRight } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 interface LoginPageProps {
-  onNavigate: (page: string) => void
+  onNavigate: (page: string) => void;
 }
 
 export function LoginPage({ onNavigate }: LoginPageProps) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
-  const [error, setError] = useState('')
-  const { login, isLoading } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
+  const { login, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
 
     if (!email || !password) {
-      setError('Please fill in all fields')
-      return
+      setError("Please fill in all fields");
+      return;
     }
 
     try {
-      const result = await login(email, password)
-      if (result.success) {
-        // Navigate based on user role - this will be handled by the main app
-        onNavigate('events')
-      } else {
-        setError(result.error || 'Invalid email or password')
-      }
+      const result = await login(email, password);
     } catch (err) {
-      setError('An error occurred. Please try again.')
+      setError("An error occurred. Please try again.");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Background decoration */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="absolute top-20 left-10 w-32 h-32 bg-destructive/10 rounded-full blur-3xl animate-pulse-glow"></div>
       <div className="absolute bottom-20 right-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse-glow"></div>
-      
+
       <div className="relative w-full max-w-md animate-slide-up">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-destructive rounded-xl flex items-center justify-center mr-4 animate-bounce-gentle">
-              <span className="text-destructive-foreground font-black text-3xl">E</span>
-            </div>
             <span className="redis-heading-md">Uni.io</span>
           </div>
           <h1 className="redis-heading-md mb-4">
@@ -78,12 +74,19 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
                 <Alert variant="destructive" className="border-2">
-                  <AlertDescription className="font-medium">{error}</AlertDescription>
+                  <AlertDescription className="font-medium">
+                    {error}
+                  </AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="font-bold uppercase tracking-wide text-sm">Email</Label>
+                <Label
+                  htmlFor="email"
+                  className="font-bold uppercase tracking-wide text-sm"
+                >
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
@@ -96,7 +99,12 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="font-bold uppercase tracking-wide text-sm">Password</Label>
+                <Label
+                  htmlFor="password"
+                  className="font-bold uppercase tracking-wide text-sm"
+                >
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -113,19 +121,24 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                   <Checkbox
                     id="remember"
                     checked={rememberMe}
-                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      setRememberMe(checked as boolean)
+                    }
                   />
                   <Label htmlFor="remember" className="text-sm font-medium">
                     Remember me
                   </Label>
                 </div>
-                <Button variant="link" className="px-0 text-sm font-bold text-destructive hover:text-destructive/80">
+                <Button
+                  variant="link"
+                  className="px-0 text-sm font-bold text-destructive hover:text-destructive/80"
+                >
                   FORGOT PASSWORD?
                 </Button>
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full redis-button bg-destructive hover:bg-destructive/90 py-6 text-lg animate-pulse-glow"
                 disabled={isLoading}
               >
@@ -146,11 +159,11 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
 
             <div className="text-center mt-8">
               <p className="text-sm text-muted-foreground">
-                Don't have an account yet?{' '}
-                <Button 
-                  variant="link" 
+                Don't have an account yet?{" "}
+                <Button
+                  variant="link"
                   className="px-0 text-destructive font-bold hover:text-destructive/80"
-                  onClick={() => onNavigate('signup')}
+                  onClick={() => onNavigate("signup")}
                 >
                   CREATE ACCOUNT →
                 </Button>
@@ -160,13 +173,17 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
         </Card>
 
         <div className="text-center mt-8 p-4 bg-muted/50 rounded-lg border border-border">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">DEMO ACCOUNTS</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">
+            DEMO ACCOUNTS
+          </p>
           <p className="text-xs text-muted-foreground">
-            <strong>Student:</strong> student@test.com | <strong>Admin:</strong> admin@test.com<br />
+            <strong>Student:</strong> student@test.com | <strong>Admin:</strong>{" "}
+            admin@test.com
+            <br />
             <strong>Password:</strong> anything works! 🎉
           </p>
         </div>
       </div>
     </div>
-  )
+  );
 }
