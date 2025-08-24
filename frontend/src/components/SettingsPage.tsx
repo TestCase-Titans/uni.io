@@ -1,62 +1,75 @@
-import { useState } from 'react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Switch } from './ui/switch'
-import { Separator } from './ui/separator'
-import { ArrowLeft, User, Bell, Palette, Shield } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import { useTheme } from '../contexts/ThemeContext'
-import { toast } from 'sonner@2.0.3'
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Switch } from "./ui/switch";
+import { Separator } from "./ui/separator";
+import { ArrowLeft, User, Bell, Palette, Shield } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { toast } from "sonner@2.0.3";
+import { useNavigate } from "react-router-dom";
 
-interface SettingsPageProps {
-  onNavigate: (page: string) => void
-}
+interface SettingsPageProps {}
 
-export function SettingsPage({ onNavigate }: SettingsPageProps) {
-  const { user } = useAuth()
-  const { theme, setTheme } = useTheme()
-  
+export function SettingsPage({}: SettingsPageProps) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
+
   const [profileData, setProfileData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-  })
-  
+    name: user?.name || "",
+    email: user?.email || "",
+  });
+
   const [notifications, setNotifications] = useState({
     eventReminders: true,
     weeklyDigest: false,
     newEvents: true,
-    eventUpdates: true
-  })
+    eventUpdates: true,
+  });
 
   const handleProfileSave = () => {
     // In a real app, this would update the user profile
-    toast.success('Profile updated successfully')
-  }
+    toast.success("Profile updated successfully");
+  };
 
   const handleNotificationChange = (key: string, value: boolean) => {
-    setNotifications(prev => ({ ...prev, [key]: value }))
-    toast.success('Notification preferences updated')
-  }
+    setNotifications((prev) => ({ ...prev, [key]: value }));
+    toast.success("Notification preferences updated");
+  };
 
-  const isDashboard = user?.role === 'student' ? 'student-dashboard' : 'admin-dashboard'
+  const isDashboard =
+    user?.role === "student" ? "student-dashboard" : "admin-dashboard";
 
   return (
     <div className="min-h-screen px-4 py-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => onNavigate(isDashboard)}
+          <Button
+            variant="ghost"
+            onClick={() => navigate(isDashboard)}
             className="mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
-          
+
           <h1 className="text-3xl mb-2">Settings</h1>
           <p className="text-muted-foreground">
             Manage your account preferences and notification settings
@@ -111,17 +124,27 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   <Input
                     id="name"
                     value={profileData.name}
-                    onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
                   <Input
                     id="email"
                     type="email"
                     value={profileData.email}
-                    onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
                   />
                 </div>
 
@@ -130,17 +153,14 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   <div className="p-3 bg-muted rounded-lg">
                     <span className="capitalize font-medium">{user?.role}</span>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {user?.role === 'student' 
-                        ? 'You can register for events and view your attendance history'
-                        : 'You can create and manage events for your organization'
-                      }
+                      {user?.role === "student"
+                        ? "You can register for events and view your attendance history"
+                        : "You can create and manage events for your organization"}
                     </p>
                   </div>
                 </div>
 
-                <Button onClick={handleProfileSave}>
-                  Save Changes
-                </Button>
+                <Button onClick={handleProfileSave}>Save Changes</Button>
               </CardContent>
             </Card>
 
@@ -160,12 +180,15 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   <div className="space-y-0.5">
                     <Label>Event Reminders</Label>
                     <p className="text-sm text-muted-foreground">
-                      Receive reminders about upcoming events you're registered for
+                      Receive reminders about upcoming events you're registered
+                      for
                     </p>
                   </div>
                   <Switch
                     checked={notifications.eventReminders}
-                    onCheckedChange={(checked) => handleNotificationChange('eventReminders', checked)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("eventReminders", checked)
+                    }
                   />
                 </div>
 
@@ -180,7 +203,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   </div>
                   <Switch
                     checked={notifications.newEvents}
-                    onCheckedChange={(checked) => handleNotificationChange('newEvents', checked)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("newEvents", checked)
+                    }
                   />
                 </div>
 
@@ -195,7 +220,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   </div>
                   <Switch
                     checked={notifications.eventUpdates}
-                    onCheckedChange={(checked) => handleNotificationChange('eventUpdates', checked)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("eventUpdates", checked)
+                    }
                   />
                 </div>
 
@@ -210,7 +237,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   </div>
                   <Switch
                     checked={notifications.weeklyDigest}
-                    onCheckedChange={(checked) => handleNotificationChange('weeklyDigest', checked)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("weeklyDigest", checked)
+                    }
                   />
                 </div>
               </CardContent>
@@ -230,7 +259,10 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Theme</Label>
-                  <Select value={theme} onValueChange={(value: any) => setTheme(value)}>
+                  <Select
+                    value={theme}
+                    onValueChange={(value: any) => setTheme(value)}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
@@ -262,7 +294,8 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                 <div className="p-4 border rounded-lg">
                   <h4 className="font-medium mb-2">Data Protection</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Your personal information is protected and only used for event management purposes.
+                    Your personal information is protected and only used for
+                    event management purposes.
                   </p>
                   <div className="flex space-x-2">
                     <Button variant="outline" size="sm">
@@ -279,5 +312,5 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

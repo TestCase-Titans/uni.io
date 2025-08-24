@@ -1,55 +1,71 @@
-import { useState } from 'react'
-import { Button } from './ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Badge } from './ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
-import { Separator } from './ui/separator'
-import { 
-  CalendarDays, 
-  MapPin, 
-  Users, 
-  Settings, 
-  LogOut, 
+import { useState } from "react";
+import { Button } from "./ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Separator } from "./ui/separator";
+import {
+  CalendarDays,
+  MapPin,
+  Users,
+  Settings,
+  LogOut,
   Calendar,
   Clock,
   Trophy,
-  ArrowRight
-} from 'lucide-react'
-import { useData } from '../contexts/DataContext'
-import { useAuth } from '../contexts/AuthContext'
-import { toast } from 'sonner@2.0.3'
+  ArrowRight,
+} from "lucide-react";
+import { useData } from "../contexts/DataContext";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner@2.0.3";
+import { useNavigate } from "react-router-dom";
 
-interface StudentDashboardProps {
-  onNavigate: (page: string) => void
-}
+interface StudentDashboardProps {}
 
-export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
-  const { userEvents, unregisterFromEvent } = useData()
-  const { user, logout } = useAuth()
-  const [activeTab, setActiveTab] = useState('upcoming')
+export function StudentDashboard({}: StudentDashboardProps) {
+  const navigate = useNavigate();
+  const { userEvents, unregisterFromEvent } = useData();
+  const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState("upcoming");
 
-  const upcomingEvents = userEvents.filter(event => event.status === 'upcoming')
-  const completedEvents = userEvents.filter(event => event.status === 'completed')
+  const upcomingEvents = userEvents.filter(
+    (event) => event.status === "upcoming"
+  );
+  const completedEvents = userEvents.filter(
+    (event) => event.status === "completed"
+  );
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      'Technology': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-      'Environment': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-      'Career': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      'Arts': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300'
-    }
-    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
-  }
+      Technology:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+      Environment:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+      Career:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+      Arts: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
+    };
+    return (
+      colors[category as keyof typeof colors] ||
+      "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+    );
+  };
 
   const handleUnregister = (eventId: string, eventTitle: string) => {
-    unregisterFromEvent(eventId)
-    toast.success(`Unregistered from "${eventTitle}"`)
-  }
+    unregisterFromEvent(eventId);
+    toast.success(`Unregistered from "${eventTitle}"`);
+  };
 
   const handleLogout = () => {
-    logout()
-    onNavigate('home')
-  }
+    logout();
+    navigate("/home");
+  };
 
   return (
     <div className="min-h-screen bg-muted/50">
@@ -66,41 +82,43 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
               </div>
               <h3 className="font-medium">{user?.name}</h3>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
-              <Badge variant="secondary" className="mt-2">Student</Badge>
+              <Badge variant="secondary" className="mt-2">
+                Student
+              </Badge>
             </div>
 
             <Separator />
 
             {/* Navigation */}
             <nav className="space-y-2">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="w-full justify-start"
-                onClick={() => setActiveTab('upcoming')}
+                onClick={() => setActiveTab("upcoming")}
               >
                 <Calendar className="h-4 w-4 mr-3" />
                 My Events
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="w-full justify-start"
-                onClick={() => onNavigate('events')}
+                onClick={() => navigate("/events")}
               >
                 <CalendarDays className="h-4 w-4 mr-3" />
                 All Events
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="w-full justify-start"
-                onClick={() => onNavigate('certificates')}
+                onClick={() => navigate("/certificates")}
               >
                 <Trophy className="h-4 w-4 mr-3" />
                 Certificates
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="w-full justify-start"
-                onClick={() => onNavigate('settings')}
+                onClick={() => navigate("/settings")}
               >
                 <Settings className="h-4 w-4 mr-3" />
                 Settings
@@ -109,8 +127,8 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
 
             <Separator />
 
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
               onClick={handleLogout}
             >
@@ -125,7 +143,9 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
           <div className="max-w-6xl mx-auto">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl mb-2">Welcome back, {user?.name?.split(' ')[0]}!</h1>
+              <h1 className="text-3xl mb-2">
+                Welcome back, {user?.name?.split(" ")[0]}!
+              </h1>
               <p className="text-muted-foreground">
                 Manage your event registrations and discover new opportunities
               </p>
@@ -140,7 +160,9 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                       <p className="text-sm font-medium text-muted-foreground">
                         Upcoming Events
                       </p>
-                      <p className="text-2xl font-bold">{upcomingEvents.length}</p>
+                      <p className="text-2xl font-bold">
+                        {upcomingEvents.length}
+                      </p>
                     </div>
                     <Calendar className="h-8 w-8 text-muted-foreground" />
                   </div>
@@ -154,7 +176,9 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                       <p className="text-sm font-medium text-muted-foreground">
                         Completed
                       </p>
-                      <p className="text-2xl font-bold">{completedEvents.length}</p>
+                      <p className="text-2xl font-bold">
+                        {completedEvents.length}
+                      </p>
                     </div>
                     <Trophy className="h-8 w-8 text-muted-foreground" />
                   </div>
@@ -177,7 +201,11 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
             </div>
 
             {/* Events Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="space-y-6"
+            >
               <TabsList>
                 <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
                 <TabsTrigger value="completed">Completed Events</TabsTrigger>
@@ -192,7 +220,7 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                       <p className="text-muted-foreground mb-6">
                         You haven't registered for any upcoming events yet.
                       </p>
-                      <Button onClick={() => onNavigate('events')}>
+                      <Button onClick={() => navigate("/events")}>
                         Browse Events
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
@@ -201,7 +229,10 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                 ) : (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {upcomingEvents.map((event) => (
-                      <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                      <Card
+                        key={event.id}
+                        className="hover:shadow-lg transition-shadow"
+                      >
                         <CardHeader>
                           <div className="flex items-start justify-between mb-2">
                             <Badge className={getCategoryColor(event.category)}>
@@ -210,15 +241,17 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleUnregister(event.id, event.title)}
+                              onClick={() =>
+                                handleUnregister(event.id, event.title)
+                              }
                               className="text-xs text-muted-foreground hover:text-destructive"
                             >
                               Unregister
                             </Button>
                           </div>
-                          <CardTitle 
+                          <CardTitle
                             className="line-clamp-2 cursor-pointer hover:text-destructive"
-                            onClick={() => onNavigate(`event-${event.id}`)}
+                            onClick={() => navigate(`event-${event.id}`)}
                           >
                             {event.title}
                           </CardTitle>
@@ -230,7 +263,9 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                           <div className="space-y-2 text-sm">
                             <div className="flex items-center text-muted-foreground">
                               <CalendarDays className="h-4 w-4 mr-2" />
-                              {new Date(event.date).toLocaleDateString()} at {event.time}
+                              {new Date(
+                                event.date
+                              ).toLocaleDateString()} at {event.time}
                             </div>
                             <div className="flex items-center text-muted-foreground">
                               <MapPin className="h-4 w-4 mr-2" />
@@ -255,9 +290,10 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                       <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <h3 className="text-lg mb-2">No completed events</h3>
                       <p className="text-muted-foreground mb-6">
-                        Complete some events to see them here and earn certificates.
+                        Complete some events to see them here and earn
+                        certificates.
                       </p>
-                      <Button onClick={() => onNavigate('events')}>
+                      <Button onClick={() => navigate("/events")}>
                         Explore Events
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
@@ -266,7 +302,10 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                 ) : (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {completedEvents.map((event) => (
-                      <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                      <Card
+                        key={event.id}
+                        className="hover:shadow-lg transition-shadow"
+                      >
                         <CardHeader>
                           <div className="flex items-start justify-between mb-2">
                             <Badge className={getCategoryColor(event.category)}>
@@ -274,9 +313,9 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                             </Badge>
                             <Badge variant="secondary">Completed</Badge>
                           </div>
-                          <CardTitle 
+                          <CardTitle
                             className="line-clamp-2 cursor-pointer hover:text-destructive"
-                            onClick={() => onNavigate(`event-${event.id}`)}
+                            onClick={() => navigate(`event-${event.id}`)}
                           >
                             {event.title}
                           </CardTitle>
@@ -292,11 +331,11 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
                               {event.location}
                             </div>
                           </div>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
+                          <Button
+                            variant="outline"
+                            size="sm"
                             className="w-full mt-4"
-                            onClick={() => onNavigate('certificates')}
+                            onClick={() => navigate("/certificates")}
                           >
                             <Trophy className="h-4 w-4 mr-2" />
                             View Certificate
@@ -312,5 +351,5 @@ export function StudentDashboard({ onNavigate }: StudentDashboardProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

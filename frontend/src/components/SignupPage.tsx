@@ -11,16 +11,16 @@ import {
 } from "./ui/card";
 import apiClient from "../utils/api";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Loader2, User, Shield, Zap, Rocket, Star } from "lucide-react";
 import { useAuth, type UserRole } from "../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 
-interface SignupPageProps {
-  onNavigate: (page: string) => void;
-}
+interface SignupPageProps {}
 
-export function SignupPage({ onNavigate }: SignupPageProps) {
+export function SignupPage({}: SignupPageProps) {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -68,9 +68,6 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
       const result = await apiClient.post("/auth/register", userData);
 
       if (result.status === 201) {
-        onNavigate(
-          role === "student" ? "student-dashboard" : "admin-dashboard"
-        );
         toast.info("Verification email sent, Check your inbox!", {
           position: "top-center",
           autoClose: 5000,
@@ -82,6 +79,8 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
           theme: "light",
           //  transition: Bounce,
         });
+
+        navigate("/login");
       } else {
         setError(result.data || "Failed to create account. Please try again.");
       }
@@ -224,9 +223,11 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                   type="button"
                   onClick={() => setRole("student")}
                   className={`flex items-center justify-center space-x-2 p-6 rounded-lg font-bold text-lg transition-all
-      ${role === "student"
-                      ? "bg-blue-600 text-white shadow-lg scale-105 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:active:bg-blue-800"
-                      : "bg-blue-100 text-blue-600 hover:bg-blue-200 active:bg-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 dark:active:bg-blue-700"}`}
+      ${
+        role === "student"
+          ? "bg-blue-600 text-white shadow-lg scale-105 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:active:bg-blue-800"
+          : "bg-blue-100 text-blue-600 hover:bg-blue-200 active:bg-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 dark:active:bg-blue-700"
+      }`}
                   disabled={isLoading}
                 >
                   <User className="h-5 w-5" />
@@ -237,11 +238,13 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 {/* Club Admin Button (Red) */}
                 <Button
                   type="button"
-                  onClick={() => setRole("ClubAdmin")}
+                  onClick={() => setRole("clubAdmin")}
                   className={`flex items-center justify-center space-x-2 p-6 rounded-lg font-bold text-lg transition-all
-      ${role === "ClubAdmin"
-                      ? "bg-red-600 text-white shadow-lg scale-105 hover:bg-red-700 active:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 dark:active:bg-red-800"
-                      : "bg-red-100 text-red-600 hover:bg-red-200 active:bg-red-300 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800 dark:active:bg-red-700"}`}
+      ${
+        role === "clubAdmin"
+          ? "bg-red-600 text-white shadow-lg scale-105 hover:bg-red-700 active:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 dark:active:bg-red-800"
+          : "bg-red-100 text-red-600 hover:bg-red-200 active:bg-red-300 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800 dark:active:bg-red-700"
+      }`}
                   disabled={isLoading}
                 >
                   <Shield className="h-5 w-5" />
@@ -249,7 +252,6 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                   <Rocket className="h-4 w-4" />
                 </Button>
               </div>
-
 
               <Button
                 type="submit"
@@ -277,7 +279,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 <Button
                   variant="link"
                   className="px-0 text-destructive font-bold hover:text-destructive/80"
-                  onClick={() => onNavigate("login")}
+                  onClick={() => navigate("/login")}
                 >
                   SIGN IN NOW →
                 </Button>
