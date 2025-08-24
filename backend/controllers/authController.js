@@ -98,7 +98,7 @@ export const login = (req, res, next) => {
         req.session.cookie.expires = false;
       }
 
-      const userResponse = { ...user.dataValues };
+      const userResponse = { ...user };
       delete userResponse.password;
 
       return res.json({

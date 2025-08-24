@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string,
     rememberMe: boolean
   ): Promise<User> => {
-    // Change return type to Promise<User>
     try {
       const userData = {
         email,
@@ -51,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await apiClient.post("/auth/login", userData);
       setUser(response.data.user); // Set user state on successful login
+      console.log("The user: ", response.data);
       return response.data.user;
     } catch (error) {
       console.error("Login failed:", error);
