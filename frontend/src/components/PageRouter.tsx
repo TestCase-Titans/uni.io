@@ -1,3 +1,4 @@
+import React from 'react';
 import { HomePage } from './HomePage'
 import { LoginPage } from './LoginPage' 
 import { SignupPage } from './SignupPage'
@@ -9,6 +10,7 @@ import { EventFormPage } from './EventFormPage'
 import { CertificatesPage } from './CertificatesPage'
 import { SettingsPage } from './SettingsPage'
 import { ROUTES, isEventDetailsPage, isEditEventPage, extractEventId } from '../utils/router'
+import AutoCertificateGenerator from '../pages/AutoCertificateGenerator'
 
 interface PageRouterProps {
   currentPage: string
@@ -47,6 +49,20 @@ export function PageRouter({ currentPage, onNavigate }: PageRouterProps) {
       return <CertificatesPage onNavigate={onNavigate} />
     case ROUTES.SETTINGS:
       return <SettingsPage onNavigate={onNavigate} />
+    case ROUTES.AUTO_CERTIFICATE_GENERATOR:
+      return <AutoCertificateGenerator 
+        participant={{ id: 'U-0001', name: 'Demo User' }}
+        event={{
+          id: 'EVT-2025-UNI',
+          title: 'University Event',
+          venue: 'Main Campus',
+          dateText: new Date().toLocaleDateString()
+        }}
+        org={{ name: 'University', code: 'UNI' }}
+        certificateId={`UNI-${Date.now()}`}
+        verifyUrl="https://example.com/verify"
+        fileName="Certificate.pdf"
+      />
     default:
       return <HomePage onNavigate={onNavigate} />
   }
