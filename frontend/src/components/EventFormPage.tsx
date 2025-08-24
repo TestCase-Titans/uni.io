@@ -129,7 +129,7 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
         toast.success("Event created successfully!");
       }
 
-      navigate("admin-dashboard");
+      navigate("/admin-dashboard");
     } catch (err) {
       setError("An error occurred. Please try again.");
     } finally {
@@ -148,7 +148,7 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate("admin-dashboard")}
+            onClick={() => navigate("/admin-dashboard")}
             className="mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -333,7 +333,7 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("admin-dashboard")}
+                  onClick={() => navigate("/admin-dashboard")}
                   disabled={isLoading}
                   className="flex-1"
                 >

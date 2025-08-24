@@ -40,7 +40,7 @@ export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
           <h1 className="text-2xl mb-4">Event not found</h1>
-          <Button onClick={() => navigate("events")}>Back to Events</Button>
+          <Button onClick={() => navigate("/events")}>Back to Events</Button>
         </div>
       </div>
     );
@@ -86,7 +86,7 @@ export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
   const handleRegister = () => {
     if (!user) {
       toast.error("Please sign in to register for events");
-      navigate("login");
+      navigate("/login");
       return;
     }
 
@@ -136,7 +136,7 @@ export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
         {/* Back Button */}
         <Button
           variant="ghost"
-          onClick={() => navigate("events")}
+          onClick={() => navigate("/events")}
           className="mb-6"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -263,14 +263,14 @@ export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
                     <div className="space-y-2">
                       <Button
                         className="w-full bg-destructive hover:bg-destructive/90"
-                        onClick={() => navigate("login")}
+                        onClick={() => navigate("/login")}
                       >
                         Sign In
                       </Button>
                       <Button
                         variant="outline"
                         className="w-full"
-                        onClick={() => navigate("signup")}
+                        onClick={() => navigate("/signup")}
                       >
                         Create Account
                       </Button>

@@ -94,7 +94,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
 
   const handleLogout = () => {
     logout();
-    navigate("home");
+    navigate("/");
   };
 
   return (
@@ -128,7 +128,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
               <Button
                 variant="ghost"
                 className="w-full justify-start"
-                onClick={() => navigate("events")}
+                onClick={() => navigate("/events")}
               >
                 <CalendarDays className="h-4 w-4 mr-3" />
                 All Events
@@ -136,7 +136,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
               <Button
                 variant="ghost"
                 className="w-full justify-start"
-                onClick={() => navigate("settings")}
+                onClick={() => navigate("/settings")}
               >
                 <Settings className="h-4 w-4 mr-3" />
                 Settings
@@ -169,7 +169,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
               </div>
               <Button
                 className="bg-destructive hover:bg-destructive/90"
-                onClick={() => navigate("create-event")}
+                onClick={() => navigate("/create-event")}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Event
@@ -258,7 +258,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
                       Create your first event to get started with event
                       management.
                     </p>
-                    <Button onClick={() => navigate("create-event")}>
+                    <Button onClick={() => navigate("/create-event")}>
                       <Plus className="h-4 w-4 mr-2" />
                       Create Event
                     </Button>

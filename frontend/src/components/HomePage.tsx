@@ -102,7 +102,7 @@ export function HomePage({}: HomePageProps) {
               variant="outline"
               size="lg"
               className="redis-button text-lg px-8 py-6 border-2"
-              onClick={() => navigate("events")}
+              onClick={() => navigate("/events")}
             >
               <Star className="mr-2 h-5 w-5" />
               DISCOVER EVENTS
@@ -214,7 +214,7 @@ export function HomePage({}: HomePageProps) {
               variant="outline"
               size="lg"
               className="redis-button border-2 border-destructive text-destructive hover:bg-destructive hover:text-white"
-              onClick={() => navigate("events")}
+              onClick={() => navigate("/events")}
             >
               <Zap className="mr-2 h-5 w-5" />
               VIEW ALL EVENTS
@@ -347,7 +347,7 @@ export function HomePage({}: HomePageProps) {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <button
-                    onClick={() => navigate("events")}
+                    onClick={() => navigate("/events")}
                     className="hover:text-destructive transition-colors"
                   >
                     Browse Events

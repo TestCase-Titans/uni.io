@@ -98,7 +98,7 @@ export function CertificatesPage({}: CertificatesPageProps) {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate("student-dashboard")}
+            onClick={() => navigate("/student-dashboard")}
             className="mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -113,7 +113,7 @@ export function CertificatesPage({}: CertificatesPageProps) {
               </p>
             </div>
             <Button
-              onClick={() => navigate("auto-certificate-generator")}
+              onClick={() => navigate("/auto-certificate-generator")}
               className="bg-destructive hover:bg-destructive/90"
             >
               Generate New Certificate
@@ -131,7 +131,7 @@ export function CertificatesPage({}: CertificatesPageProps) {
                 Complete events to earn certificates that you can download and
                 add to your portfolio.
               </p>
-              <Button onClick={() => navigate("events")}>Browse Events</Button>
+              <Button onClick={() => navigate("/events")}>Browse Events</Button>
             </CardContent>
           </Card>
         ) : (

@@ -64,7 +64,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
 
   const handleLogout = () => {
     logout();
-    navigate("home");
+    navigate("/home");
   };
 
   return (
@@ -102,7 +102,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
               <Button
                 variant="ghost"
                 className="w-full justify-start"
-                onClick={() => navigate("events")}
+                onClick={() => navigate("/events")}
               >
                 <CalendarDays className="h-4 w-4 mr-3" />
                 All Events
@@ -110,7 +110,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
               <Button
                 variant="ghost"
                 className="w-full justify-start"
-                onClick={() => navigate("certificates")}
+                onClick={() => navigate("/certificates")}
               >
                 <Trophy className="h-4 w-4 mr-3" />
                 Certificates
@@ -118,7 +118,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
               <Button
                 variant="ghost"
                 className="w-full justify-start"
-                onClick={() => navigate("settings")}
+                onClick={() => navigate("/settings")}
               >
                 <Settings className="h-4 w-4 mr-3" />
                 Settings
@@ -220,7 +220,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                       <p className="text-muted-foreground mb-6">
                         You haven't registered for any upcoming events yet.
                       </p>
-                      <Button onClick={() => navigate("events")}>
+                      <Button onClick={() => navigate("/events")}>
                         Browse Events
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
@@ -293,7 +293,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                         Complete some events to see them here and earn
                         certificates.
                       </p>
-                      <Button onClick={() => navigate("events")}>
+                      <Button onClick={() => navigate("/events")}>
                         Explore Events
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
@@ -335,7 +335,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                             variant="outline"
                             size="sm"
                             className="w-full mt-4"
-                            onClick={() => navigate("certificates")}
+                            onClick={() => navigate("/certificates")}
                           >
                             <Trophy className="h-4 w-4 mr-2" />
                             View Certificate

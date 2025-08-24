@@ -170,7 +170,7 @@ export function LoginPage({}: LoginPageProps) {
                 <Button
                   variant="link"
                   className="px-0 text-destructive font-bold hover:text-destructive/80"
-                  onClick={() => navigate("signup")}
+                  onClick={() => navigate("/signup")}
                 >
                   CREATE ACCOUNT →
                 </Button>

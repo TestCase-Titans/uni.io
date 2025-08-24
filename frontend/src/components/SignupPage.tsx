@@ -279,7 +279,7 @@ export function SignupPage({}: SignupPageProps) {
                 <Button
                   variant="link"
                   className="px-0 text-destructive font-bold hover:text-destructive/80"
-                  onClick={() => navigate("login")}
+                  onClick={() => navigate("/login")}
                 >
                   SIGN IN NOW →
                 </Button>

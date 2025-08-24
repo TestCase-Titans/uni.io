@@ -3,7 +3,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { DataProvider } from "./contexts/DataContext";
 import { Navigation } from "./components/Navigation";
-import { AppRoutes } from "./AppRoutes"; // We will create this component next
+import { AppRoutes } from "./AppRoutes.tsx";
 import { ToastContainer } from "react-toastify";
 
 export default function App() {
