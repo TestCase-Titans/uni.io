@@ -92,31 +92,36 @@ export const updateEvent = (req, res) => {
 };
 
 // Delete Event (clubAdmin can delete own events, sysAdmin can delete any)
+
 export const deleteEvent = (req, res) => {
   const eventId = req.params.id;
-  const user = req.user;
+  const { name: userName, role: userRole } = req.user;
 
-  let query;
-  let params;
+  const findQuery = "SELECT organizer FROM clubEvents WHERE id = ?";
+  db.query(findQuery, [eventId], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
 
-  if (user.isSysAdmin) {
-    // sysAdmin can delete any event
-    query = "DELETE FROM clubEvents WHERE id = ?";
-    params = [eventId];
-  } else {
-    // clubAdmin can delete only own events
-    const organizer = req.user.name;
-    query = "DELETE FROM clubEvents WHERE id = ? AND organizer = ?";
-    params = [eventId, organizer];
-  }
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Event not found" });
+    }
 
-  db.query(query, params, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (result.affectedRows === 0)
-      return res
-        .status(404)
-        .json({ message: "Event not found or not allowed to delete" });
-    res.json({ message: "Event deleted successfully" });
+    const eventOrganizer = results[0].organizer;
+
+    if (userRole !== "sysAdmin" && eventOrganizer !== userName) {
+      return res.status(403).json({
+        message: "Forbidden: You do not have permission to delete this event.",
+      });
+    }
+
+    const deleteQuery = "DELETE FROM clubEvents WHERE id = ?";
+    db.query(deleteQuery, [eventId], (deleteErr, deleteResult) => {
+      if (deleteErr) {
+        return res.status(500).json({ error: deleteErr.message });
+      }
+      res.json({ message: "Event deleted successfully" });
+    });
   });
 };
 
@@ -125,10 +130,19 @@ export const getMyEvents = (req, res) => {
   const organizer = req.user.name;
 
   const query = `
-    SELECT *,
-      (SELECT COUNT(*) FROM eventRegistrants WHERE event_id = clubEvents.id) AS registeredCount
-    FROM clubEvents
-    WHERE organizer = ?
+    SELECT 
+      e.*,
+      (SELECT COUNT(*) FROM eventRegistrants er WHERE er.event_id = e.id) AS registered,
+      ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) AS endTime,
+      CASE
+        WHEN NOW() > ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) THEN 'completed'
+        WHEN NOW() >= CONCAT(e.event_date, ' ', e.event_time) AND NOW() <= ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) THEN 'ongoing'
+        ELSE 'upcoming'
+      END AS status
+    FROM 
+      clubEvents e
+    WHERE 
+      e.organizer = ?
   `;
 
   db.query(query, [organizer], (err, results) => {
