@@ -14,6 +14,7 @@ import {
   CalendarDays,
   MapPin,
   Users,
+  User,
   Settings,
   LogOut,
   Calendar,
@@ -94,6 +95,14 @@ export function StudentDashboard({}: StudentDashboardProps) {
               <Button
                 variant="ghost"
                 className="w-full justify-start"
+                onClick={() => navigate("/settings")}
+              >
+                <User className="h-4 w-4 mr-3" />
+                Profile
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
                 onClick={() => setActiveTab("upcoming")}
               >
                 <Calendar className="h-4 w-4 mr-3" />
@@ -115,14 +124,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                 <Trophy className="h-4 w-4 mr-3" />
                 Certificates
               </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => navigate("/settings")}
-              >
-                <Settings className="h-4 w-4 mr-3" />
-                Profile
-              </Button>
+              
             </nav>
 
             <Separator />

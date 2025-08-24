@@ -20,6 +20,7 @@ import { Separator } from "./ui/separator";
 import {
   CalendarDays,
   MapPin,
+  User,
   Users,
   Settings,
   LogOut,
@@ -121,6 +122,14 @@ export function AdminDashboard({}: AdminDashboardProps) {
 
             {/* Navigation */}
             <nav className="space-y-2">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => navigate("/settings")}
+              >
+                <User className="h-4 w-4 mr-3" />
+                Profile
+              </Button>
               <Button variant="ghost" className="w-full justify-start">
                 <BarChart3 className="h-4 w-4 mr-3" />
                 Dashboard
@@ -132,14 +141,6 @@ export function AdminDashboard({}: AdminDashboardProps) {
               >
                 <CalendarDays className="h-4 w-4 mr-3" />
                 All Events
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => navigate("/settings")}
-              >
-                <Settings className="h-4 w-4 mr-3" />
-                Profile
               </Button>
             </nav>
 
