@@ -335,11 +335,11 @@ export function EventsPage({}: EventsPageProps) {
                           <div className="flex items-center text-muted-foreground font-medium">
                             <CalendarDays className="h-4 w-4 mr-2 text-destructive" />
                             {new Date(event.date).toLocaleDateString()} at{" "}
-                            {event.time}
+                            {event.time} until {event.endTime}
                           </div>
                           <div className="flex items-center text-muted-foreground font-medium">
                             <MapPin className="h-4 w-4 mr-2 text-destructive" />
-                            {event.location}
+                            {event.address}
                           </div>
                         </div>
                         <div className="mt-4 pt-4 border-t border-border">
@@ -395,11 +395,11 @@ export function EventsPage({}: EventsPageProps) {
                           <div className="flex items-center">
                             <CalendarDays className="h-4 w-4 mr-1 text-destructive" />
                             {new Date(event.date).toLocaleDateString()} at{" "}
-                            {event.time}
+                            {event.time} until {event.endTime}
                           </div>
                           <div className="flex items-center">
                             <MapPin className="h-4 w-4 mr-1 text-destructive" />
-                            {event.location}
+                            {event.address}
                           </div>
                           <div className="flex items-center">
                             <Users className="h-4 w-4 mr-1 text-destructive" />

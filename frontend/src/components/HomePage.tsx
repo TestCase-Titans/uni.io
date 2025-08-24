@@ -187,7 +187,7 @@ export function HomePage({}: HomePageProps) {
                     </div>
                     <div className="flex items-center text-muted-foreground font-medium">
                       <MapPin className="h-4 w-4 mr-2 text-destructive" />
-                      {event.location}
+                      {event.address}
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-border">

@@ -295,7 +295,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
                             </TableCell>
                             <TableCell className="max-w-xs">
                               <div className="truncate text-sm">
-                                {event.location}
+                                {event.address}
                               </div>
                             </TableCell>
                             <TableCell>

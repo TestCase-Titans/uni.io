@@ -135,7 +135,7 @@ export function EventDetailsPage({}: EventDetailsPageProps) {
       endDate
     )}&details=${encodeURIComponent(
       event.description
-    )}&location=${encodeURIComponent(event.location)}`;
+    )}&location=${encodeURIComponent(event.address)}`;
 
     window.open(calendarUrl, "_blank");
   };
@@ -207,7 +207,7 @@ export function EventDetailsPage({}: EventDetailsPageProps) {
                         })}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        at {event.time}
+                        at {event.time} until {event.endTime}
                       </p>
                     </div>
                   </div>
@@ -215,7 +215,7 @@ export function EventDetailsPage({}: EventDetailsPageProps) {
                   <div className="flex items-center">
                     <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{event.location}</p>
+                      <p className="font-medium">{event.address}</p>
                       <p className="text-sm text-muted-foreground">
                         Event location
                       </p>

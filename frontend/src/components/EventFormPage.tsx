@@ -61,7 +61,7 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
         description: existingEvent.description,
         date: existingEvent.date,
         time: existingEvent.time,
-        location: existingEvent.location,
+        location: existingEvent.address,
         category: existingEvent.category,
         capacity: existingEvent.capacity.toString(),
         organizer: existingEvent.organizer,

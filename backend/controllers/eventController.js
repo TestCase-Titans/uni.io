@@ -64,12 +64,10 @@ export const createEvent = (req, res) => {
         ],
         (err, result) => {
           if (err) return res.status(500).json({ error: err.message });
-          res
-            .status(201)
-            .json({
-              message: "Event created successfully",
-              eventId: result.insertId,
-            });
+          res.status(201).json({
+            message: "Event created successfully",
+            eventId: result.insertId,
+          });
         }
       );
     }
@@ -143,7 +141,20 @@ export const getMyEvents = (req, res) => {
 
 // Browse all events (for students)
 export const getAllEvents = (req, res) => {
-  const query = "SELECT * FROM clubEvents";
+  const query = `
+    SELECT 
+      e.*,
+      (SELECT COUNT(*) FROM eventRegistrants er WHERE er.event_id = e.id) AS registered,
+      ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) AS endTime,
+      CASE
+        WHEN NOW() > ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) THEN 'completed'
+        WHEN NOW() >= CONCAT(e.event_date, ' ', e.event_time) AND NOW() <= ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) THEN 'ongoing'
+        ELSE 'upcoming'
+      END AS status
+    FROM 
+      clubEvents e
+  `;
+
   db.query(query, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -153,7 +164,22 @@ export const getAllEvents = (req, res) => {
 // Event detail by id
 export const getEventById = (req, res) => {
   const eventId = req.params.id;
-  const query = "SELECT * FROM clubEvents WHERE id = ?";
+  const query = `
+    SELECT 
+      e.*,
+      (SELECT COUNT(*) FROM eventRegistrants er WHERE er.event_id = e.id) AS registered,
+      ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) AS endTime,
+      CASE
+        WHEN NOW() > ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) THEN 'completed'
+        WHEN NOW() >= CONCAT(e.event_date, ' ', e.event_time) AND NOW() <= ADDTIME(CONCAT(e.event_date, ' ', e.event_time), SEC_TO_TIME(e.duration * 60)) THEN 'ongoing'
+        ELSE 'upcoming'
+      END AS status
+    FROM 
+      clubEvents e
+    WHERE 
+      e.id = ?
+  `;
+
   db.query(query, [eventId], (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     if (result.length === 0)
