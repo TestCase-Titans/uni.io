@@ -244,17 +244,14 @@ const Chatbot: React.FC = () => {
               className="w-full p-3 pr-12 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 bg-white text-black placeholder:text-gray-400 text-sm transition-all duration-200"
             />
             <button
-              onClick={handleSendMessage}
-              disabled={!inputMessage.trim()}
-              className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors ${
-                inputMessage.trim()
-                  ? "text-primary hover:bg-accent/50"
-                  : "text-muted-foreground/40"
-              }`}
-              aria-label="Send message"
-            >
-              <FiSend size={20} />
-            </button>
+  onClick={handleSendMessage}
+  disabled={!inputMessage.trim()}
+  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors text-black"
+  aria-label="Send message"
+>
+  <FiSend size={20} />
+</button>
+
           </div>
         </div>
       </div>
@@ -262,12 +259,12 @@ const Chatbot: React.FC = () => {
       {/* Toggle Button - Always Visible */}
       <button
         onClick={toggleChat}
-        className={`w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/90 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-          isOpen ? "rotate-180" : ""
+        className={`w-14 h-14 rounded-full bg-black dark:bg-primary text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+          isOpen ? 'rotate-180' : ''
         }`}
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
-        {isOpen ? <FiX size={24} /> : <FiMessageSquare size={24} />}
+        {isOpen ? <FiX size={24} className="text-white" /> : <FiMessageSquare size={24} className="text-white" />}
       </button>
     </div>
   );
