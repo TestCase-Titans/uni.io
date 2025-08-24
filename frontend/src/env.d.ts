@@ -2,7 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_GEMINI_API_KEY: string;
-  readonly BACKEND_API: string;
+  readonly VITE_BACKEND_API: string;
 }
 
 interface ImportMeta {
