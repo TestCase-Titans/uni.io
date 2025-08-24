@@ -13,7 +13,7 @@ export const register = async (req, res) => {
 
     let clubAdminStatus = "never_applied";
     if (role === "clubAdmin") {
-      clubAdminStatus = "pending";
+      clubAdminStatus = "accepted";
     }
 
     const userQuery =
@@ -36,7 +36,7 @@ export const register = async (req, res) => {
 
         if (role === "clubAdmin") {
           const appQuery =
-            "INSERT INTO clubAdminApplications (userId, status, appliedAt, reviewedBy, reviewedAt) VALUES (?, 'pending', NOW(), NULL, NULL)";
+            "INSERT INTO clubAdminApplications (userId, status, appliedAt, reviewedBy, reviewedAt) VALUES (?, 'accepted', NOW(), NULL, NULL)";
           db.query(appQuery, [userId], (err2) => {
             if (err2)
               console.error(

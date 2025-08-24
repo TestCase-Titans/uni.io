@@ -33,7 +33,7 @@ VALUES
 CREATE TABLE clubAdminApplications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId INT NOT NULL,
-    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'accepted',
     appliedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     reviewedBy INT NULL,
     reviewedAt TIMESTAMP NULL,
