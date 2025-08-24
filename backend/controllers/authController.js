@@ -12,7 +12,7 @@ export const register = async (req, res) => {
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
     let clubAdminStatus = "never_applied";
-    if (role === "ClubAdmin") {
+    if (role === "clubAdmin") {
       clubAdminStatus = "pending";
     }
 
@@ -34,7 +34,7 @@ export const register = async (req, res) => {
 
         const userId = result.insertId;
 
-        if (role === "ClubAdmin") {
+        if (role === "clubAdmin") {
           const appQuery =
             "INSERT INTO clubAdminApplications (userId, status, appliedAt, reviewedBy, reviewedAt) VALUES (?, 'pending', NOW(), NULL, NULL)";
           db.query(appQuery, [userId], (err2) => {

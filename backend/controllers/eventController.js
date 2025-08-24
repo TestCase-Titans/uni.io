@@ -93,7 +93,7 @@ export const updateEvent = (req, res) => {
 
 // Delete Event (clubAdmin can delete own events, sysAdmin can delete any)
 export const deleteEvent = (req, res) => {
-  const eventId = req.params.id;
+  const eventId = req.params.eventId; // match the route param
   const user = req.user;
 
   let query;
@@ -104,18 +104,19 @@ export const deleteEvent = (req, res) => {
     query = "DELETE FROM clubEvents WHERE id = ?";
     params = [eventId];
   } else {
-    // clubAdmin can delete only own events
-    const organizer = req.user.name;
+    // clubAdmin can delete only events they organized
+    const organizer = user.name;
     query = "DELETE FROM clubEvents WHERE id = ? AND organizer = ?";
     params = [eventId, organizer];
   }
 
   db.query(query, params, (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       return res
         .status(404)
         .json({ message: "Event not found or not allowed to delete" });
+    }
     res.json({ message: "Event deleted successfully" });
   });
 };
