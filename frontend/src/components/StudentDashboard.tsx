@@ -264,8 +264,9 @@ export function StudentDashboard({}: StudentDashboardProps) {
                             <div className="flex items-center text-muted-foreground">
                               <CalendarDays className="h-4 w-4 mr-2" />
                               {new Date(
-                                event.date
-                              ).toLocaleDateString()} at {event.time}
+                                event.event_date
+                              ).toLocaleDateString()}{" "}
+                              at {event.time}
                             </div>
                             <div className="flex items-center text-muted-foreground">
                               <MapPin className="h-4 w-4 mr-2" />
@@ -324,7 +325,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                           <div className="space-y-2 text-sm">
                             <div className="flex items-center text-muted-foreground">
                               <CalendarDays className="h-4 w-4 mr-2" />
-                              {new Date(event.date).toLocaleDateString()}
+                              {new Date(event.event_date).toLocaleDateString()}
                             </div>
                             <div className="flex items-center text-muted-foreground">
                               <MapPin className="h-4 w-4 mr-2" />

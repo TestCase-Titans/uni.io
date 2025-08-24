@@ -25,8 +25,8 @@ export default function AutoCertificateGenerator({
   const containerRef = useRef(null);
   const certRef = useRef(null);
 
-  const [scale, setScale] = useState(1);        // responsive screen scale (preview only)
-  const [qr, setQr] = useState("");             // QR data URL
+  const [scale, setScale] = useState(1); // responsive screen scale (preview only)
+  const [qr, setQr] = useState(""); // QR data URL
   const [downloading, setDownloading] = useState(false);
 
   // Generate QR once
@@ -38,9 +38,9 @@ export default function AutoCertificateGenerator({
           width: 96,
           margin: 1,
           color: {
-            dark: '#0f172a',
-            light: '#ffffff'
-          }
+            dark: "#0f172a",
+            light: "#ffffff",
+          },
         });
         setQr(dataUrl);
       } catch (e) {
@@ -96,20 +96,20 @@ export default function AutoCertificateGenerator({
         overflow: "hidden",
       });
       clone.setAttribute("data-capture-root", "1");
-      
+
       // Fix all child elements to use absolute positioning for PDF
-      const allElements = clone.querySelectorAll('*');
-      allElements.forEach(el => {
+      const allElements = clone.querySelectorAll("*");
+      allElements.forEach((el) => {
         const computed = window.getComputedStyle(el);
-        if (computed.position === 'relative' || computed.display === 'flex') {
-          el.style.position = 'static';
+        if (computed.position === "relative" || computed.display === "flex") {
+          el.style.position = "static";
         }
       });
 
       document.body.appendChild(clone);
-      
+
       // Wait a bit for rendering
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(clone, {
         scale: 2,
@@ -141,7 +141,10 @@ export default function AutoCertificateGenerator({
               root.querySelectorAll("*").forEach((el) => {
                 const s = el.getAttribute("style");
                 if (s && s.includes("oklch(")) {
-                  el.setAttribute("style", s.replace(/oklch\([^)]*\)/g, "#000"));
+                  el.setAttribute(
+                    "style",
+                    s.replace(/oklch\([^)]*\)/g, "#000")
+                  );
                 }
               });
             }
@@ -158,15 +161,15 @@ export default function AutoCertificateGenerator({
       const pdf = new jsPDF("landscape", "pt", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
+
       // Scale to fit properly
       const imgProps = pdf.getImageProperties(imgData);
       const imgWidth = pdfWidth;
       const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-      
+
       // Center vertically if needed
       const yOffset = imgHeight < pdfHeight ? (pdfHeight - imgHeight) / 2 : 0;
-      
+
       pdf.addImage(imgData, "PNG", 0, yOffset, imgWidth, imgHeight);
       pdf.save(fileName || `Certificate-${participant.name}.pdf`);
     } catch (e) {
@@ -179,8 +182,8 @@ export default function AutoCertificateGenerator({
 
   // Colors (hex via inline styles so no oklch)
   const COLORS = {
-    dark: "#0f172a",  // slate-900
-    gray: "#6b7280",  // gray-500
+    dark: "#0f172a", // slate-900
+    gray: "#6b7280", // gray-500
     gold: "#C7A14B",
     lightBorder: "#e5e7eb",
     midBorder: "#d1d5db",
@@ -190,7 +193,10 @@ export default function AutoCertificateGenerator({
     <div className="min-h-screen w-full bg-white p-4 md:p-6">
       <div className="mx-auto max-w-6xl">
         {/* PREVIEW CARD */}
-        <div className="rounded-2xl border" style={{ borderColor: COLORS.lightBorder }}>
+        <div
+          className="rounded-2xl border"
+          style={{ borderColor: COLORS.lightBorder }}
+        >
           <div className="bg-[#fafafa] p-3 rounded-2xl">
             {/* Responsive container controls the scale */}
             <div ref={containerRef} className="relative w-full overflow-hidden">
@@ -209,34 +215,34 @@ export default function AutoCertificateGenerator({
                 {/* Double frame */}
                 <div
                   className="absolute rounded-lg pointer-events-none"
-                  style={{ 
+                  style={{
                     border: `3px solid ${COLORS.gold}`,
                     left: "24px",
-                    right: "24px", 
+                    right: "24px",
                     top: "24px",
-                    bottom: "24px"
+                    bottom: "24px",
                   }}
                 />
                 <div
                   className="absolute rounded-md pointer-events-none"
-                  style={{ 
+                  style={{
                     border: `1px solid ${COLORS.dark}`,
                     left: "40px",
                     right: "40px",
-                    top: "40px", 
-                    bottom: "40px"
+                    top: "40px",
+                    bottom: "40px",
                   }}
                 />
 
                 {/* Top gold bar */}
                 <div
                   className="absolute"
-                  style={{ 
+                  style={{
                     backgroundColor: COLORS.gold,
                     left: "40px",
                     right: "40px",
                     top: "56px",
-                    height: "3px"
+                    height: "3px",
                   }}
                 />
 
@@ -259,22 +265,37 @@ export default function AutoCertificateGenerator({
                 </div>
 
                 {/* CONTENT - Using absolute positioning for PDF compatibility */}
-                <div 
+                <div
                   className="absolute"
                   style={{
                     left: "40px",
-                    right: "40px", 
+                    right: "40px",
                     top: "32px",
                     bottom: "32px",
-                    zIndex: 10
+                    zIndex: 10,
                   }}
                 >
                   {/* Branding Row */}
-                  <div style={{ position: "relative", height: "60px", marginBottom: "32px" }}>
+                  <div
+                    style={{
+                      position: "relative",
+                      height: "60px",
+                      marginBottom: "32px",
+                    }}
+                  >
                     {/* Left side - Logo and org name */}
-                    <div style={{ position: "absolute", left: 0, top: 0, display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                      }}
+                    >
                       <div
-                        style={{ 
+                        style={{
                           width: "48px",
                           height: "48px",
                           backgroundColor: COLORS.dark,
@@ -284,144 +305,245 @@ export default function AutoCertificateGenerator({
                           justifyContent: "center",
                           color: "white",
                           fontSize: "18px",
-                          fontWeight: "bold"
+                          fontWeight: "bold",
                         }}
                       >
                         {org.code || "ORG"}
                       </div>
-                      <div style={{ fontSize: "20px", fontWeight: "600", color: COLORS.dark }}>
+                      <div
+                        style={{
+                          fontSize: "20px",
+                          fontWeight: "600",
+                          color: COLORS.dark,
+                        }}
+                      >
                         {org.name}
                       </div>
                     </div>
-                    
+
                     {/* Right side - IDs */}
-                    <div style={{ position: "absolute", right: 0, top: 0, textAlign: "right", fontSize: "12px", color: COLORS.gray }}>
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                        top: 0,
+                        textAlign: "right",
+                        fontSize: "12px",
+                        color: COLORS.gray,
+                      }}
+                    >
                       <div>Registration: {participant.id}</div>
-                      <div style={{ marginTop: "4px" }}>ID: {certificateId}</div>
+                      <div style={{ marginTop: "4px" }}>
+                        ID: {certificateId}
+                      </div>
                     </div>
                   </div>
 
                   {/* Title Block */}
-                  <div style={{ textAlign: "center", marginTop: "32px", marginBottom: "64px" }}>
-                    <div style={{ fontSize: "14px", letterSpacing: "0.3em", color: COLORS.gray, marginBottom: "12px" }}>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginTop: "32px",
+                      marginBottom: "64px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "14px",
+                        letterSpacing: "0.3em",
+                        color: COLORS.gray,
+                        marginBottom: "12px",
+                      }}
+                    >
                       CERTIFICATE OF PARTICIPATION
                     </div>
-                    <div style={{ fontSize: "48px", fontWeight: "800", color: COLORS.dark, marginBottom: "8px", lineHeight: 1.1 }}>
+                    <div
+                      style={{
+                        fontSize: "48px",
+                        fontWeight: "800",
+                        color: COLORS.dark,
+                        marginBottom: "8px",
+                        lineHeight: 1.1,
+                      }}
+                    >
                       {participant.name}
                     </div>
-                    <div style={{ fontSize: "16px", color: "#4b5563", marginBottom: "8px" }}>
+                    <div
+                      style={{
+                        fontSize: "16px",
+                        color: "#4b5563",
+                        marginBottom: "8px",
+                      }}
+                    >
                       has successfully participated in
                     </div>
-                    <div style={{ fontSize: "24px", fontWeight: "600", color: COLORS.dark, marginBottom: "12px" }}>
+                    <div
+                      style={{
+                        fontSize: "24px",
+                        fontWeight: "600",
+                        color: COLORS.dark,
+                        marginBottom: "12px",
+                      }}
+                    >
                       {event.title}
                     </div>
                     <div style={{ fontSize: "14px", color: COLORS.dark }}>
-                      Date: {event.dateText} • Venue: {event.venue}
+                      Date: {event.event_dateText} • Venue: {event.venue}
                     </div>
                   </div>
 
                   {/* Divider */}
-                  <div style={{ 
-                    height: "1px", 
-                    backgroundColor: COLORS.midBorder, 
-                    width: "75%", 
-                    margin: "32px auto" 
-                  }} />
+                  <div
+                    style={{
+                      height: "1px",
+                      backgroundColor: COLORS.midBorder,
+                      width: "75%",
+                      margin: "32px auto",
+                    }}
+                  />
 
                   {/* Footer row - Using absolute positioning */}
-                  <div style={{ position: "absolute", bottom: "80px", left: 0, right: 0, height: "120px" }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "80px",
+                      left: 0,
+                      right: 0,
+                      height: "120px",
+                    }}
+                  >
                     {/* Left signature */}
-                    <div style={{ position: "absolute", left: "16px", width: "280px", textAlign: "center" }}>
-                      <div style={{ 
-                        width: "224px", 
-                        height: "1px", 
-                        backgroundColor: COLORS.dark, 
-                        margin: "0 auto 8px" 
-                      }} />
-                      <div style={{ fontSize: "12px", color: COLORS.gray }}>Event Coordinator</div>
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: "16px",
+                        width: "280px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "224px",
+                          height: "1px",
+                          backgroundColor: COLORS.dark,
+                          margin: "0 auto 8px",
+                        }}
+                      />
+                      <div style={{ fontSize: "12px", color: COLORS.gray }}>
+                        Event Coordinator
+                      </div>
                     </div>
 
                     {/* Seal (center) */}
-                    <div style={{ 
-                      position: "absolute", 
-                      left: "50%", 
-                      transform: "translateX(-50%)",
-                      width: "96px",
-                      height: "96px"
-                    }}>
-                      <div style={{ 
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: "50%",
+                        transform: "translateX(-50%)",
                         width: "96px",
                         height: "96px",
-                        backgroundColor: COLORS.gold,
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                      }}>
-                        <div style={{ 
-                          width: "80px",
-                          height: "80px",
-                          backgroundColor: "#ffffff",
-                          border: `2px solid ${COLORS.dark}`,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "96px",
+                          height: "96px",
+                          backgroundColor: COLORS.gold,
                           borderRadius: "50%",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center"
-                        }}>
-                          <div style={{ 
-                            fontSize: "10px", 
-                            fontWeight: "bold", 
-                            color: COLORS.dark, 
-                            letterSpacing: "0.15em", 
-                            lineHeight: 1.1,
-                            textAlign: "center"
-                          }}>
-                            OFFICIAL<br />SEAL
+                          justifyContent: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            backgroundColor: "#ffffff",
+                            border: `2px solid ${COLORS.dark}`,
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "10px",
+                              fontWeight: "bold",
+                              color: COLORS.dark,
+                              letterSpacing: "0.15em",
+                              lineHeight: 1.1,
+                              textAlign: "center",
+                            }}
+                          >
+                            OFFICIAL
+                            <br />
+                            SEAL
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* QR (right) */}
-                    <div style={{ position: "absolute", right: "16px", width: "280px", textAlign: "center" }}>
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: "16px",
+                        width: "280px",
+                        textAlign: "center",
+                      }}
+                    >
                       {qr ? (
                         <img
                           src={qr}
                           alt="QR"
-                          style={{ 
+                          style={{
                             width: "96px",
                             height: "96px",
                             border: `1px solid ${COLORS.midBorder}`,
                             borderRadius: "8px",
                             padding: "4px",
                             margin: "0 auto",
-                            display: "block"
+                            display: "block",
                           }}
                         />
                       ) : (
-                        <div style={{ 
-                          width: "96px",
-                          height: "96px",
-                          border: `1px solid ${COLORS.lightBorder}`,
-                          backgroundColor: "#f3f4f6",
-                          borderRadius: "8px",
-                          margin: "0 auto"
-                        }} />
+                        <div
+                          style={{
+                            width: "96px",
+                            height: "96px",
+                            border: `1px solid ${COLORS.lightBorder}`,
+                            backgroundColor: "#f3f4f6",
+                            borderRadius: "8px",
+                            margin: "0 auto",
+                          }}
+                        />
                       )}
-                      <div style={{ fontSize: "11px", color: COLORS.gray, marginTop: "4px" }}>Verify</div>
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          color: COLORS.gray,
+                          marginTop: "4px",
+                        }}
+                      >
+                        Verify
+                      </div>
                     </div>
                   </div>
 
                   {/* Bottom meta */}
-                  <div style={{ 
-                    position: "absolute", 
-                    bottom: "48px", 
-                    left: 0, 
-                    right: 0, 
-                    textAlign: "center", 
-                    fontSize: "11px", 
-                    color: COLORS.gray 
-                  }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "48px",
+                      left: 0,
+                      right: 0,
+                      textAlign: "center",
+                      fontSize: "11px",
+                      color: COLORS.gray,
+                    }}
+                  >
                     Certificate ID: {certificateId} • Verify at {verifyUrl}
                   </div>
                 </div>
@@ -429,12 +551,12 @@ export default function AutoCertificateGenerator({
                 {/* Bottom gold bar */}
                 <div
                   className="absolute"
-                  style={{ 
+                  style={{
                     backgroundColor: COLORS.gold,
                     left: "40px",
                     right: "40px",
                     bottom: "56px",
-                    height: "3px"
+                    height: "3px",
                   }}
                 />
               </div>
@@ -451,7 +573,14 @@ export default function AutoCertificateGenerator({
           >
             {downloading ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
               </svg>
             ) : (
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">

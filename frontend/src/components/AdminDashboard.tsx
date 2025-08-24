@@ -286,7 +286,9 @@ export function AdminDashboard({}: AdminDashboardProps) {
                             <TableCell>
                               <div className="text-sm">
                                 <div>
-                                  {new Date(event.date).toLocaleDateString()}
+                                  {new Date(
+                                    event.event_date
+                                  ).toLocaleDateString()}
                                 </div>
                                 <div className="text-muted-foreground">
                                   {event.time}

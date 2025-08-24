@@ -182,7 +182,7 @@ export function HomePage({}: HomePageProps) {
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center text-muted-foreground font-medium">
                       <CalendarDays className="h-4 w-4 mr-2 text-destructive" />
-                      {new Date(event.date).toLocaleDateString()} at{" "}
+                      {new Date(event.event_date).toLocaleDateString()} at{" "}
                       {event.time}
                     </div>
                     <div className="flex items-center text-muted-foreground font-medium">

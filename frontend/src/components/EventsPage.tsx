@@ -334,7 +334,7 @@ export function EventsPage({}: EventsPageProps) {
                         <div className="space-y-3 text-sm">
                           <div className="flex items-center text-muted-foreground font-medium">
                             <CalendarDays className="h-4 w-4 mr-2 text-destructive" />
-                            {new Date(event.date).toLocaleDateString()} at{" "}
+                            {new Date(event.event_date).toLocaleDateString()} at{" "}
                             {event.time} until {event.endTime}
                           </div>
                           <div className="flex items-center text-muted-foreground font-medium">
@@ -394,7 +394,7 @@ export function EventsPage({}: EventsPageProps) {
                         <div className="flex items-center space-x-6 text-sm text-muted-foreground font-medium">
                           <div className="flex items-center">
                             <CalendarDays className="h-4 w-4 mr-1 text-destructive" />
-                            {new Date(event.date).toLocaleDateString()} at{" "}
+                            {new Date(event.event_date).toLocaleDateString()} at{" "}
                             {event.time} until {event.endTime}
                           </div>
                           <div className="flex items-center">

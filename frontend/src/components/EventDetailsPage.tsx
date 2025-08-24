@@ -123,7 +123,7 @@ export function EventDetailsPage({}: EventDetailsPageProps) {
   };
 
   const handleAddToCalendar = () => {
-    const startDate = new Date(`${event.date}T${event.time}`);
+    const startDate = new Date(`${event.event_date}T${event.time}`);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
 
     const formatDate = (date: Date) =>
@@ -199,12 +199,15 @@ export function EventDetailsPage({}: EventDetailsPageProps) {
                     <CalendarDays className="h-5 w-5 mr-3 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
-                        {new Date(event.date).toLocaleDateString("en-US", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {new Date(event.event_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         at {event.time} until {event.endTime}

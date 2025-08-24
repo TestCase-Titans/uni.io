@@ -162,7 +162,7 @@ export function CertificatesPage({}: CertificatesPageProps) {
                     </CardTitle>
                     <CardDescription>
                       Completed on{" "}
-                      {new Date(event.date).toLocaleDateString("en-US", {
+                      {new Date(event.event_date).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
