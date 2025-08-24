@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import session from "express-session";
 import passport from "passport";
-
+import MySQLStore from "express-mysql-session";
 import "./config/db.js";
 import configurePassport from "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -27,13 +27,24 @@ app.use(
 
 app.use(express.json());
 
+const sessionStore = new (MySQLStore(session))({}, db);
+
 app.use(
   session({
     secret: "secretKey",
     resave: false,
     saveUninitialized: false,
+    store: sessionStore, // Use the persistent MySQL store
+    cookie: {
+      secure: true, // required for SameSite=None
+      sameSite: "none", // allow cross-domain cookies
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24, // cookie lasts 1 day
+    },
   })
 );
+
+app.set("trust proxy", 1);
 
 configurePassport(passport);
 app.use(passport.initialize());
