@@ -22,7 +22,7 @@ export function Navigation() {
     {
       to: "/admin-dashboard",
       label: "Dashboard",
-      show: user?.role === "sysAdmin",
+      show: user?.role === "clubAdmin" || user?.role === "sysAdmin",
     },
   ].filter((item) => item.show);
 

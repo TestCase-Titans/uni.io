@@ -38,9 +38,17 @@ export default function (passport) {
 
   passport.deserializeUser((id, done) => {
     const query =
-      "SELECT id, email, name, isBanned, isSysAdmin FROM users WHERE id = ?";
+      "SELECT id, email, name, isBanned, isSysAdmin, clubAdminStatus FROM users WHERE id = ?";
     db.query(query, [id], (err, results) => {
-      done(err, results[0]);
+      if (err) return done(err);
+      const user = results[0];
+      if (!user) return done(null, false);
+
+      if (user.isSysAdmin) user.role = "sysAdmin";
+      else if (user.clubAdminStatus === "accepted") user.role = "clubAdmin";
+      else user.role = "student";
+
+      done(null, user);
     });
   });
 }
