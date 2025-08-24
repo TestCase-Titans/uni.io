@@ -246,6 +246,17 @@ export function EventDetailsPage({}: EventDetailsPageProps) {
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
                   {event.description}
                 </p>
+
+                {/* Add the event image if the URL exists */}
+                {event.image_url && (
+                  <div className="mt-6">
+                    <img
+                      src={event.image_url}
+                      alt={event.title}
+                      className="w-full h-auto rounded-lg object-cover aspect-video"
+                    />
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
