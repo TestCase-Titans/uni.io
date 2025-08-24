@@ -173,7 +173,7 @@ export function SignupPage({}: SignupPageProps) {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="example@gmail.com"
+                  placeholder="example@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}

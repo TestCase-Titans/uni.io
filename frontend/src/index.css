@@ -78,11 +78,11 @@
   }
 }
 
-/* Dark mode autofill fix */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-internal-autofill-selected {
+/* Dark mode autofill fix only */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-internal-autofill-selected {
   -webkit-text-fill-color: #f1f5f9; /* text color in dark mode */
   -webkit-box-shadow: 0 0 0px 1000px #1e293b inset; /* dark bg */
   box-shadow: 0 0 0px 1000px #1e293b inset;
