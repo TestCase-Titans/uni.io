@@ -22,20 +22,43 @@ export const banUser = (req, res) => {
 };
 
 export const approveClubAdmin = (req, res) => {
-  const { id } = req.params;
+  const { applicationId } = req.params;
 
-  const query = "UPDATE users SET clubAdminStatus = 'accepted' WHERE id = ? AND clubAdminStatus = 'pending'";
-  db.query(query, [id], (err, result) => {
+  // 1. Find the application
+  const findAppQuery = "SELECT userId, status FROM clubAdminApplications WHERE id = ?";
+  db.query(findAppQuery, [applicationId], (err, results) => {
     if (err) return res.status(500).json({ message: "DB error" });
-    if (result.affectedRows === 0) {
-      return res.status(400).json({ message: "No pending request for this user" });
+    if (results.length === 0) return res.status(404).json({ message: "Application not found" });
+
+    const application = results[0];
+    if (application.status !== "pending") {
+      return res.status(400).json({ message: "Application is not pending" });
     }
-    res.json({ message: "Club admin request approved" });
+
+    const userId = application.userId;
+
+    // 2. Update user
+    const updateUserQuery = "UPDATE users SET clubAdminStatus = 'accepted' WHERE id = ?";
+    db.query(updateUserQuery, [userId], (err2) => {
+      if (err2) return res.status(500).json({ message: "DB error updating user" });
+
+      // 3. Update application as reviewed
+      const updateAppQuery = "UPDATE clubAdminApplications SET status = 'accepted', reviewedBy = ?, reviewedAt = NOW() WHERE id = ?";
+      db.query(updateAppQuery, [req.user.id, applicationId], (err3) => {
+        if (err3) return res.status(500).json({ message: "DB error updating application" });
+
+        res.json({ message: "Club admin request approved" });
+      });
+    });
   });
 };
 
+
 export const addSysAdmin = (req, res) => {
-  const { id } = req.params;
+  const { userId } = req.params;
+  const id = parseInt(userId, 10); 
+
+  if (!id) return res.status(400).json({ message: "Invalid user id" });
 
   const query = "UPDATE users SET isSysAdmin = 1 WHERE id = ?";
   db.query(query, [id], (err, result) => {
