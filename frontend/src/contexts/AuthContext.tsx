@@ -24,7 +24,7 @@ interface AuthContextType {
     email: string,
     password: string,
     rememberMe: boolean
-  ) => Promise<void>;
+  ) => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -40,7 +40,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     email: string,
     password: string,
     rememberMe: boolean
-  ) => {
+  ): Promise<User> => {
+    // Change return type to Promise<User>
     try {
       const userData = {
         email,
@@ -55,7 +56,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Login failed:", error);
       setUser(null);
 
-      //  console.log(error.response?.data?.message);
       toast.warn(error.response?.data?.message || "An error occured", {
         position: "top-right",
         autoClose: 5000,
@@ -65,10 +65,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         draggable: true,
         progress: undefined,
         theme: "light",
-        //  transition: Bounce,
       });
 
-      throw error; // Re-throw error so login form can catch it
+      throw error;
     }
   };
 

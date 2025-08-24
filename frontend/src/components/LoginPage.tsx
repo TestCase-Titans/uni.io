@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -14,16 +15,15 @@ import { Alert, AlertDescription } from "./ui/alert";
 import { Loader2, Zap, ArrowRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
-interface LoginPageProps {
-  onNavigate: (page: string) => void;
-}
+interface LoginPageProps {}
 
-export function LoginPage({ onNavigate }: LoginPageProps) {
+export function LoginPage({}: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +36,14 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
 
     try {
       const result = await login(email, password, rememberMe);
+
+      if (result) {
+        if (result.role === "student") {
+          navigate("/student-dashboard");
+        } else {
+          navigate("/admin-dashboard");
+        }
+      }
     } catch (err) {
       setError("An error occurred. Please try again.");
     }
@@ -162,7 +170,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 <Button
                   variant="link"
                   className="px-0 text-destructive font-bold hover:text-destructive/80"
-                  onClick={() => onNavigate("signup")}
+                  onClick={() => navigate("signup")}
                 >
                   CREATE ACCOUNT →
                 </Button>
