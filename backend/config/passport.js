@@ -37,8 +37,7 @@ export default function (passport) {
   });
 
   passport.deserializeUser((id, done) => {
-    const query =
-      "SELECT id, email, name, isBanned, isSysAdmin, clubAdminStatus FROM users WHERE id = ?";
+    const query = "SELECT id, email, name, isBanned, isSysAdmin, clubAdminStatus FROM users WHERE id = ?";
     db.query(query, [id], (err, results) => {
       if (err) return done(err);
       const user = results[0];
@@ -51,4 +50,6 @@ export default function (passport) {
       done(null, user);
     });
   });
+
+
 }
