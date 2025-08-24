@@ -7,26 +7,52 @@ import React, {
 } from "react";
 import apiClient from "../utils/api";
 import { LoadingScreen } from "../components/LoadingScreen";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
-export interface User {
+export interface BackendUser {
   id: number;
   name: string;
   email: string;
-  role: string;
+  isSysAdmin: boolean | 0 | 1; // Handle both boolean and number
+  clubAdminStatus: "never_applied" | "pending" | "accepted" | "rejected";
+}
+
+export interface User extends BackendUser {
+  role: UserRole;
 }
 
 // Define the shape of the context value
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ) => Promise<User>;
   logout: () => Promise<void>;
 }
 
-export type UserRole = "student" | "ClubAdmin" | "admin";
+export type UserRole = "student" | "clubAdmin" | "sysAdmin";
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+const processUser = (backendUser: BackendUser): User | null => {
+  let role: UserRole;
+
+  if (backendUser.isSysAdmin) {
+    role = "sysAdmin";
+  } else if (backendUser.clubAdminStatus === "accepted") {
+    role = "clubAdmin";
+  } else if (backendUser.clubAdminStatus === "never_applied") {
+    role = "student";
+  } else {
+    // Users with 'pending' or 'rejected' status will not get a valid user object
+    return null;
+  }
+
+  return { ...backendUser, role };
+};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -36,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     email: string,
     password: string,
     rememberMe: boolean
-  ) => {
+  ): Promise<User> => {
     try {
       const userData = {
         email,
@@ -45,13 +71,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       };
 
       const response = await apiClient.post("/auth/login", userData);
-      setUser(response.data.user); // Set user state on successful login
-      return response.data.user;
+      const backendUser: BackendUser = response.data.user;
+
+      console.log("Backend user data on LOGIN:", backendUser);
+
+      if (backendUser.clubAdminStatus === "pending") {
+        throw new Error("Your club admin application is pending approval.");
+      }
+
+      if (backendUser.clubAdminStatus === "rejected") {
+        throw new Error("Your club admin application has been rejected.");
+      }
+
+      const processedUser = processUser(backendUser);
+
+      if (!processedUser) {
+        throw new Error("Could not determine user role. Access denied.");
+      }
+
+      setUser(processedUser);
+
+      return processedUser;
     } catch (error) {
       console.error("Login failed:", error);
       setUser(null);
 
-      //  console.log(error.response?.data?.message);
       toast.warn(error.response?.data?.message || "An error occured", {
         position: "top-right",
         autoClose: 5000,
@@ -61,10 +105,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         draggable: true,
         progress: undefined,
         theme: "light",
-        //  transition: Bounce,
       });
 
-      throw error; // Re-throw error so login form can catch it
+      throw error;
     }
   };
 
@@ -83,7 +126,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Create an endpoint on your backend that returns the user if they have a valid session
       const response = await apiClient.get("/auth/status");
-      setUser(response.data.user);
+      const backendUser: BackendUser = response.data.user;
+
+      console.log("Backend user data on REFRESH:", backendUser);
+
+      const processedUser = processUser(backendUser);
+
+      console.log("Processed user on REFRESH:", processedUser);
+
+      setUser(processedUser);
     } catch (error) {
       // If the request fails (e.g., 401 Unauthorized), it means no valid session
       setUser(null);

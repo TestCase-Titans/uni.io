@@ -11,16 +11,16 @@ import {
 } from "./ui/card";
 import apiClient from "../utils/api";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Loader2, User, Shield, Zap, Rocket, Star } from "lucide-react";
 import { useAuth, type UserRole } from "../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 
-interface SignupPageProps {
-  onNavigate: (page: string) => void;
-}
+interface SignupPageProps {}
 
-export function SignupPage({ onNavigate }: SignupPageProps) {
+export function SignupPage({}: SignupPageProps) {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -68,9 +68,6 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
       const result = await apiClient.post("/auth/register", userData);
 
       if (result.status === 201) {
-        onNavigate(
-          role === "student" ? "student-dashboard" : "admin-dashboard"
-        );
         toast.info("Verification email sent, Check your inbox!", {
           position: "top-center",
           autoClose: 5000,
@@ -82,6 +79,8 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
           theme: "light",
           //  transition: Bounce,
         });
+
+        navigate("/login");
       } else {
         setError(result.data || "Failed to create account. Please try again.");
       }
@@ -96,7 +95,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
       <div className="absolute top-20 left-10 w-32 h-32 bg-destructive/10 rounded-full blur-3xl animate-pulse-glow"></div>
       <div className="absolute bottom-20 right-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse-glow"></div>
 
-      <div className="relative w-full max-w-md animate-slide-up">
+      <div className="relative w-full max-w-xl animate-slide-up">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
             <span className="redis-heading-md">UNI.IO</span>
@@ -138,7 +137,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Your awesome name"
+                  placeholder="Your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
@@ -156,7 +155,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Your unique username"
+                  placeholder="preferred username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   disabled={isLoading}
@@ -174,7 +173,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your.email@university.edu"
+                  placeholder="example@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
@@ -218,48 +217,40 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 />
               </div>
 
-              <div className="space-y-3">
-                <Label className="font-bold uppercase tracking-wide text-sm">
-                  CHOOSE YOUR ADVENTURE
-                </Label>
-                <RadioGroup
-                  value={role}
-                  onValueChange={(value) => setRole(value as UserRole)}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Student Button (Blue) */}
+                <Button
+                  type="button"
+                  onClick={() => setRole("student")}
+                  className={`flex items-center justify-center space-x-2 p-6 rounded-lg font-bold text-lg transition-all
+      ${
+        role === "student"
+          ? "bg-blue-600 text-white shadow-lg scale-105 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:active:bg-blue-800"
+          : "bg-blue-100 text-blue-600 hover:bg-blue-200 active:bg-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 dark:active:bg-blue-700"
+      }`}
                   disabled={isLoading}
-                  className="space-y-3"
                 >
-                  <div className="relative">
-                    <div className="flex items-center space-x-3 p-4 border-2 rounded-lg hover:bg-muted/50 transition-all cursor-pointer hover:border-destructive/30">
-                      <RadioGroupItem value="student" id="student" />
-                      <User className="h-5 w-5 text-blue-500" />
-                      <div className="flex-1">
-                        <Label
-                          htmlFor="student"
-                          className="cursor-pointer font-bold"
-                        >
-                          STUDENT
-                        </Label>
-                      </div>
-                      <Star className="h-4 w-4 text-yellow-500" />
-                    </div>
-                  </div>
+                  <User className="h-5 w-5" />
+                  <span>STUDENT</span>
+                  <Star className="h-4 w-4 text-yellow-500" />
+                </Button>
 
-                  <div className="relative">
-                    <div className="flex items-center space-x-3 p-4 border-2 rounded-lg hover:bg-muted/50 transition-all cursor-pointer hover:border-destructive/30">
-                      <RadioGroupItem value="ClubAdmin" id="ClubAdmin" />
-                      <Shield className="h-5 w-5 text-destructive" />
-                      <div className="flex-1">
-                        <Label
-                          htmlFor="ClubAdmin"
-                          className="cursor-pointer font-bold"
-                        >
-                          CLUB ADMIN
-                        </Label>
-                      </div>
-                      <Rocket className="h-4 w-4 text-destructive" />
-                    </div>
-                  </div>
-                </RadioGroup>
+                {/* Club Admin Button (Red) */}
+                <Button
+                  type="button"
+                  onClick={() => setRole("clubAdmin")}
+                  className={`flex items-center justify-center space-x-2 p-6 rounded-lg font-bold text-lg transition-all
+      ${
+        role === "clubAdmin"
+          ? "bg-red-600 text-white shadow-lg scale-105 hover:bg-red-700 active:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 dark:active:bg-red-800"
+          : "bg-red-100 text-red-600 hover:bg-red-200 active:bg-red-300 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800 dark:active:bg-red-700"
+      }`}
+                  disabled={isLoading}
+                >
+                  <Shield className="h-5 w-5" />
+                  <span>CLUB ADMIN</span>
+                  <Rocket className="h-4 w-4" />
+                </Button>
               </div>
 
               <Button
@@ -288,7 +279,7 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 <Button
                   variant="link"
                   className="px-0 text-destructive font-bold hover:text-destructive/80"
-                  onClick={() => onNavigate("login")}
+                  onClick={() => navigate("/login")}
                 >
                   SIGN IN NOW →
                 </Button>
@@ -297,14 +288,14 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
           </CardContent>
         </Card>
 
-        <div className="text-center mt-8 p-4 bg-gradient-to-r from-destructive/10 to-blue-500/10 rounded-lg border border-destructive/20">
+        {/* <div className="text-center mt-8 p-4 bg-gradient-to-r from-destructive/10 to-blue-500/10 rounded-lg border border-destructive/20">
           <p className="text-xs font-bold uppercase tracking-wide text-destructive mb-2">
             🎉 JOIN THE PARTY
           </p>
           <p className="text-xs text-muted-foreground">
             Free forever • No spam • Instant access to epic events
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

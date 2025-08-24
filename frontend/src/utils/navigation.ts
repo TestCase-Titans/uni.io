@@ -16,7 +16,11 @@ export const getNavigationTarget = (
   }
 
   // check role-specific pages
-  if (ADMIN_ONLY_PAGES.includes(page as any) && user?.role !== "admin") {
+  if (
+    ADMIN_ONLY_PAGES.includes(page as any) &&
+    user?.role !== "clubAdmin" &&
+    user?.role !== "sysAdmin"
+  ) {
     return ROUTES.HOME;
   }
 
