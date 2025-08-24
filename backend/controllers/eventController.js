@@ -127,9 +127,13 @@ export const deleteEvent = (req, res) => {
 
 // List clubAdmin's events + quick stats
 export const getMyEvents = (req, res) => {
-  const organizer = req.user.name;
+  const { name: userName, role: userRole } = req.user;
 
-  const query = `
+  let query;
+  const queryParams = [];
+
+  // Base query with all the calculated fields
+  const baseQuery = `
     SELECT 
       e.*,
       (SELECT COUNT(*) FROM eventRegistrants er WHERE er.event_id = e.id) AS registered,
@@ -141,11 +145,18 @@ export const getMyEvents = (req, res) => {
       END AS status
     FROM 
       clubEvents e
-    WHERE 
-      e.organizer = ?
   `;
 
-  db.query(query, [organizer], (err, results) => {
+  if (userRole === "sysAdmin") {
+    // If the user is a sysAdmin, they see all events.
+    query = baseQuery;
+  } else {
+    // If the user is a clubAdmin, they only see events they organized.
+    query = `${baseQuery} WHERE e.organizer = ?`;
+    queryParams.push(userName);
+  }
+
+  db.query(query, queryParams, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
