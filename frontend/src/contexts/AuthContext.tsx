@@ -13,6 +13,7 @@ export interface BackendUser {
   id: number;
   name: string;
   email: string;
+  username: string;
   isSysAdmin: boolean | 0 | 1; // Handle both boolean and number
   clubAdminStatus: "never_applied" | "pending" | "accepted" | "rejected";
 }

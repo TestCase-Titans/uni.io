@@ -9,6 +9,7 @@ import configurePassport from "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
+import sysAdminRoutes from "./routes/sysAdminRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -37,6 +38,7 @@ app.use(passport.session());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/events", eventRoutes);
+app.use("/api/v1/sysadmin", sysAdminRoutes);
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

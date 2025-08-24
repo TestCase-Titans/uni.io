@@ -37,6 +37,8 @@ export function Navigation() {
     setMobileMenuOpen(false);
   };
 
+  console.log(user);
+
   return (
     <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,7 +74,7 @@ export function Navigation() {
             {user ? (
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <div className="text-sm font-bold">{user.name}</div>
+                  <div className="text-sm font-bold">{user.username}</div>
                   <div className="text-xs text-muted-foreground uppercase tracking-wide">
                     {user.role}
                   </div>
