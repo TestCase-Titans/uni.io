@@ -40,17 +40,17 @@ interface AdminDashboardProps {}
 
 export function AdminDashboard({}: AdminDashboardProps) {
   const navigate = useNavigate();
-  const { events, deleteEvent } = useData();
+  const { adminEvents, deleteEvent } = useData();
   const { user, logout } = useAuth();
 
   // Filter events created by this admin (in a real app, this would be based on user ID)
-  const adminEvents = events;
+  //  const adminEvents = events;
 
   const upcomingEvents = adminEvents.filter(
     (event) => event.status === "upcoming"
   );
   const totalAttendees = adminEvents.reduce(
-    (sum, event) => sum + event.registered,
+    (sum, event) => sum + (event.registered || 0),
     0
   );
 
@@ -328,7 +328,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => navigate(`/event-${event.id}`)}
+                                  onClick={() => navigate(`/event/${event.id}`)}
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
@@ -336,7 +336,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() =>
-                                    navigate(`/edit-event-${event.id}`)
+                                    navigate(`/edit-event/${event.id}`)
                                   }
                                 >
                                   <Edit className="h-4 w-4" />

@@ -43,7 +43,7 @@ CREATE TABLE clubAdminApplications (
 
 CREATE TABLE clubEvents (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    status ENUM('draft', 'upcoming', 'ongoing', 'completed', 'cancelled') DEFAULT 'draft',
+    status ENUM('draft', 'upcoming', 'ongoing', 'completed', 'cancelled') DEFAULT 'upcoming',
     title VARCHAR(255) NOT NULL UNIQUE,
     organizer VARCHAR(255) NOT NULL, -- 👈 added here
     description TEXT,

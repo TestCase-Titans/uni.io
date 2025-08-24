@@ -25,33 +25,38 @@ import {
   MapPin,
   Users,
   Type,
+  Clock,
+  Image as ImageIcon,
 } from "lucide-react";
-import { useData, type Event } from "../contexts/DataContext";
-import { toast } from "sonner@2.0.3";
-import { useNavigate } from "react-router-dom";
+import { useData } from "../contexts/DataContext";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface EventFormPageProps {
-  eventId?: string;
-}
-
-export function EventFormPage({ eventId }: EventFormPageProps) {
+export function EventFormPage() {
   const navigate = useNavigate();
+  const { eventId } = useParams<{ eventId: string }>();
   const { events, createEvent, updateEvent } = useData();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const isEditing = !!eventId;
-  const existingEvent = isEditing ? events.find((e) => e.id === eventId) : null;
+  const existingEvent = isEditing ? events.find((e) => e.id == eventId) : null;
 
+  // State now includes all required fields from the backend
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    date: "",
-    time: "",
-    location: "",
+    event_date: "",
+    event_time: "",
+    duration: "", // in minutes
+    address: "",
     category: "",
     capacity: "",
-    organizer: "Your Club", // In real app, this would be from user context
+    registration_deadline: "",
+    image_url: "",
+    organizer: user?.name || "Your Club",
   });
 
   useEffect(() => {
@@ -59,24 +64,35 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
       setFormData({
         title: existingEvent.title,
         description: existingEvent.description,
-        date: existingEvent.date,
-        time: existingEvent.time,
-        location: existingEvent.address,
+        event_date: new Date(existingEvent.event_date)
+          .toISOString()
+          .split("T")[0],
+        event_time: existingEvent.event_time,
+        duration: existingEvent.duration?.toString() || "",
+        address: existingEvent.address,
         category: existingEvent.category,
         capacity: existingEvent.capacity.toString(),
+        registration_deadline: new Date(existingEvent.registration_deadline)
+          .toISOString()
+          .slice(0, 16),
+        image_url: existingEvent.image_url || "",
         organizer: existingEvent.organizer,
       });
     }
   }, [existingEvent]);
 
   const categories = [
-    "Technology",
-    "Environment",
-    "Career",
-    "Arts",
-    "Sports",
-    "Academic",
-    "Social",
+    "technology",
+    "film and photography",
+    "environment",
+    "debate",
+    "career",
+    "sports",
+    "esports",
+    "business",
+    "health",
+    "cultural",
+    "other",
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,19 +100,18 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
     setError("");
     setIsLoading(true);
 
-    // Validation
-    if (
-      !formData.title ||
-      !formData.description ||
-      !formData.date ||
-      !formData.time ||
-      !formData.location ||
-      !formData.category ||
-      !formData.capacity
-    ) {
-      setError("Please fill in all required fields");
-      setIsLoading(false);
-      return;
+    // Simple validation for all fields
+    for (const key in formData) {
+      if (formData[key as keyof typeof formData] === "") {
+        setError(
+          `Please fill in all required fields. Missing: ${key.replace(
+            "_",
+            " "
+          )}`
+        );
+        setIsLoading(false);
+        return;
+      }
     }
 
     const capacity = parseInt(formData.capacity);
@@ -106,8 +121,14 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
       return;
     }
 
-    // Check if date is in the future
-    const eventDate = new Date(`${formData.date}T${formData.time}`);
+    const duration = parseInt(formData.duration);
+    if (isNaN(duration) || duration < 1) {
+      setError("Duration must be a positive number");
+      setIsLoading(false);
+      return;
+    }
+
+    const eventDate = new Date(`${formData.event_date}T${formData.event_time}`);
     if (!isEditing && eventDate <= new Date()) {
       setError("Event date must be in the future");
       setIsLoading(false);
@@ -118,20 +139,22 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
       const eventData = {
         ...formData,
         capacity,
-        status: "upcoming" as const,
+        duration,
       };
 
       if (isEditing && eventId) {
-        updateEvent(eventId, eventData);
+        await updateEvent(eventId, eventData);
         toast.success("Event updated successfully!");
       } else {
-        createEvent(eventData);
+        await createEvent(eventData);
         toast.success("Event created successfully!");
       }
 
       navigate("/admin-dashboard");
-    } catch (err) {
-      setError("An error occurred. Please try again.");
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message || "An error occurred. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -154,7 +177,6 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
-
           <h1 className="text-3xl mb-2">
             {isEditing ? "Edit Event" : "Create New Event"}
           </h1>
@@ -203,7 +225,7 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
                 <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
-                  placeholder="Describe your event in detail. What will attendees learn or experience?"
+                  placeholder="Describe your event in detail..."
                   rows={4}
                   value={formData.description}
                   onChange={(e) =>
@@ -216,44 +238,65 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
               {/* Date and Time */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="date">
+                  <Label htmlFor="event_date">
                     <Calendar className="h-4 w-4 inline mr-2" />
                     Date *
                   </Label>
                   <Input
-                    id="date"
+                    id="event_date"
                     type="date"
-                    value={formData.date}
-                    onChange={(e) => handleInputChange("date", e.target.value)}
+                    value={formData.event_date}
+                    onChange={(e) =>
+                      handleInputChange("event_date", e.target.value)
+                    }
                     disabled={isLoading}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="time">Time *</Label>
+                  <Label htmlFor="event_time">Time *</Label>
                   <Input
-                    id="time"
+                    id="event_time"
                     type="time"
-                    value={formData.time}
-                    onChange={(e) => handleInputChange("time", e.target.value)}
+                    value={formData.event_time}
+                    onChange={(e) =>
+                      handleInputChange("event_time", e.target.value)
+                    }
                     disabled={isLoading}
                   />
                 </div>
               </div>
 
-              {/* Location */}
+              {/* Duration */}
               <div className="space-y-2">
-                <Label htmlFor="location">
-                  <MapPin className="h-4 w-4 inline mr-2" />
-                  Location *
+                <Label htmlFor="duration">
+                  <Clock className="h-4 w-4 inline mr-2" />
+                  Duration (in minutes) *
                 </Label>
                 <Input
-                  id="location"
-                  placeholder="Where will the event take place?"
-                  value={formData.location}
+                  id="duration"
+                  type="number"
+                  min="1"
+                  placeholder="e.g., 120 for 2 hours"
+                  value={formData.duration}
                   onChange={(e) =>
-                    handleInputChange("location", e.target.value)
+                    handleInputChange("duration", e.target.value)
                   }
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Address */}
+              <div className="space-y-2">
+                <Label htmlFor="address">
+                  <MapPin className="h-4 w-4 inline mr-2" />
+                  Address *
+                </Label>
+                <Input
+                  id="address"
+                  placeholder="e.g., University Auditorium, Dhaka"
+                  value={formData.address}
+                  onChange={(e) => handleInputChange("address", e.target.value)}
                   disabled={isLoading}
                 />
               </div>
@@ -275,7 +318,7 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
                     <SelectContent>
                       {categories.map((category) => (
                         <SelectItem key={category} value={category}>
-                          {category}
+                          {category.charAt(0).toUpperCase() + category.slice(1)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -300,15 +343,34 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
                 </div>
               </div>
 
-              {/* Organizer */}
+              {/* Registration Deadline */}
               <div className="space-y-2">
-                <Label htmlFor="organizer">Organizer</Label>
+                <Label htmlFor="registration_deadline">
+                  Registration Deadline *
+                </Label>
                 <Input
-                  id="organizer"
-                  placeholder="Club or organization name"
-                  value={formData.organizer}
+                  id="registration_deadline"
+                  type="datetime-local"
+                  value={formData.registration_deadline}
                   onChange={(e) =>
-                    handleInputChange("organizer", e.target.value)
+                    handleInputChange("registration_deadline", e.target.value)
+                  }
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Image URL */}
+              <div className="space-y-2">
+                <Label htmlFor="image_url">
+                  <ImageIcon className="h-4 w-4 inline mr-2" />
+                  Image URL *
+                </Label>
+                <Input
+                  id="image_url"
+                  placeholder="https://example.com/your-event-image.png"
+                  value={formData.image_url}
+                  onChange={(e) =>
+                    handleInputChange("image_url", e.target.value)
                   }
                   disabled={isLoading}
                 />
@@ -342,8 +404,7 @@ export function EventFormPage({ eventId }: EventFormPageProps) {
               </div>
 
               <p className="text-xs text-muted-foreground">
-                * Required fields. Your event will be published immediately and
-                visible to all students.
+                * Required fields. Your event will be published immediately.
               </p>
             </form>
           </CardContent>

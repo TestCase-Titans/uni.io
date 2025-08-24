@@ -10,39 +10,35 @@ import apiClient from "../utils/api";
 import { useAuth } from "./AuthContext";
 import { toast } from "sonner";
 
-// 1. Updated Event interface to match the backend schema
 export interface Event {
   id: string;
   title: string;
   description: string;
-  event_date: string; // Changed from 'date'
-  event_time: string; // Changed from 'time'
-  location: string;
+  event_date: string;
+  event_time: string;
+  duration: number;
+  address: string;
+  room?: string;
   category: string;
   capacity: number;
-  registered: number; // This will be calculated or fetched
+  registered: number;
   organizer: string;
   image_url?: string;
   status: "upcoming" | "ongoing" | "completed" | "draft" | "cancelled";
-  // Add any other fields from your backend if necessary
-}
-
-// Registration interface remains the same
-export interface Registration {
-  eventId: string;
-  userId: string;
-  registeredAt: string;
+  registration_deadline: string;
+  endTime: string;
 }
 
 interface DataContextType {
   events: Event[];
-  userEvents: Event[]; // Events the current user is registered for
+  adminEvents: Event[];
+  userEvents: Event[];
   isLoading: boolean;
   fetchEvents: () => void;
   registerForEvent: (eventId: string) => Promise<void>;
   unregisterFromEvent: (eventId: string) => Promise<void>;
   createEvent: (
-    event: Omit<Event, "id" | "registered" | "status">
+    event: Omit<Event, "id" | "registered" | "status" | "endTime">
   ) => Promise<void>;
   updateEvent: (eventId: string, updates: Partial<Event>) => Promise<void>;
   deleteEvent: (eventId: string) => Promise<void>;
@@ -54,24 +50,17 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export function DataProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
+  const [adminEvents, setAdminEvents] = useState<Event[]>([]);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 2. Function to fetch all events from the backend
   const fetchEvents = useCallback(async () => {
+    if (!user) return; // Don't fetch if no user
     setIsLoading(true);
     try {
-      // Choose the correct endpoint based on user role
-      const endpoint = user?.role === "student" ? "/events/browse" : "/events/";
+      const endpoint = user.role === "student" ? "/events/browse" : "/events/";
       const response = await apiClient.get<Event[]>(endpoint);
-
-      // A simple fix for date and time properties until the backend is updated
-      const formattedEvents = response.data.map((event) => ({
-        ...event,
-        date: event.event_date,
-        time: event.event_time,
-      }));
-      setEvents(formattedEvents);
+      setEvents(response.data);
     } catch (error) {
       console.error("Failed to fetch events:", error);
       toast.error("Could not load events.");
@@ -80,7 +69,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  // 3. Function to fetch events the user is registered for
+  const fetchAdminEvents = useCallback(async () => {
+    if (user?.role !== "clubAdmin" && user?.role !== "sysAdmin") {
+      setAdminEvents([]);
+      return;
+    }
+    try {
+      const response = await apiClient.get<Event[]>("/events/my-events");
+      setAdminEvents(response.data);
+    } catch (error) {
+      console.error("Failed to fetch admin events:", error);
+    }
+  }, [user]);
+
   const fetchUserEvents = useCallback(async () => {
     if (user?.role !== "student") {
       setUserEvents([]);
@@ -90,45 +91,33 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const response = await apiClient.get<Event[]>(
         "/events/participated/list"
       );
-      // A simple fix for date and time properties until the backend is updated
-      const formattedEvents = response.data.map((event) => ({
-        ...event,
-        date: event.event_date,
-        time: event.event_time,
-      }));
-      setUserEvents(formattedEvents);
+      setUserEvents(response.data);
     } catch (error) {
       console.error("Failed to fetch user events:", error);
     }
   }, [user]);
 
-  // 4. Fetch initial data when the user is available
   useEffect(() => {
     if (user) {
       fetchEvents();
       fetchUserEvents();
+      fetchAdminEvents();
     } else {
-      // Clear data on logout
       setEvents([]);
       setUserEvents([]);
+      setAdminEvents([]);
       setIsLoading(false);
     }
-  }, [user, fetchEvents, fetchUserEvents]);
+  }, [user, fetchEvents, fetchUserEvents, fetchAdminEvents]);
 
-  // 5. API-driven functions
   const registerForEvent = async (eventId: string) => {
     try {
       await apiClient.post(`/events/${eventId}/register`);
       toast.success("Successfully registered for the event!");
-      // Refetch data to update the UI
-      fetchEvents();
-      fetchUserEvents();
+      await Promise.all([fetchEvents(), fetchUserEvents(), fetchAdminEvents()]);
     } catch (error: any) {
       console.error("Registration failed:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Registration failed. Please try again."
-      );
+      toast.error(error.response?.data?.message || "Registration failed.");
     }
   };
 
@@ -136,29 +125,25 @@ export function DataProvider({ children }: { children: ReactNode }) {
     try {
       await apiClient.post(`/events/${eventId}/unregister`);
       toast.success("Successfully unregistered from the event.");
-      // Refetch data to update the UI
-      fetchEvents();
-      fetchUserEvents();
+      await Promise.all([fetchEvents(), fetchUserEvents(), fetchAdminEvents()]);
     } catch (error: any) {
       console.error("Unregistration failed:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Unregistration failed. Please try again."
-      );
+      toast.error(error.response?.data?.message || "Unregistration failed.");
     }
   };
 
   const createEvent = async (
-    eventData: Omit<Event, "id" | "registered" | "status">
+    eventData: Omit<Event, "id" | "registered" | "status" | "endTime">
   ) => {
     try {
       await apiClient.post("/events/create", eventData);
       toast.success("Event created successfully!");
-      fetchEvents(); // Refresh the events list
+      // --- FIX: Refresh both event lists ---
+      await Promise.all([fetchEvents(), fetchAdminEvents()]);
     } catch (error: any) {
       console.error("Failed to create event:", error);
       toast.error(error.response?.data?.message || "Failed to create event.");
-      throw error; // Re-throw to handle in the form
+      throw error;
     }
   };
 
@@ -166,11 +151,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
     try {
       await apiClient.put(`/events/${eventId}`, updates);
       toast.success("Event updated successfully!");
-      fetchEvents(); // Refresh the events list
+      // --- FIX: Refresh both event lists ---
+      await Promise.all([fetchEvents(), fetchAdminEvents()]);
     } catch (error: any) {
       console.error("Failed to update event:", error);
       toast.error(error.response?.data?.message || "Failed to update event.");
-      throw error; // Re-throw to handle in the form
+      throw error;
     }
   };
 
@@ -178,7 +164,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
     try {
       await apiClient.delete(`/events/${eventId}`);
       toast.success("Event deleted successfully.");
-      fetchEvents(); // Refresh the events list
+      // --- FIX: Refresh both event lists ---
+      await Promise.all([fetchEvents(), fetchAdminEvents()]);
     } catch (error: any) {
       console.error("Failed to delete event:", error);
       toast.error(error.response?.data?.message || "Failed to delete event.");
@@ -186,11 +173,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
   };
 
   const isRegistered = (eventId: string) => {
-    return userEvents.some((event) => event.id === eventId);
+    return userEvents.some(
+      (event) => event.id.toString() === eventId.toString()
+    );
   };
 
   const value = {
     events,
+    adminEvents,
     userEvents,
     isLoading,
     fetchEvents,
@@ -200,8 +190,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
     updateEvent,
     deleteEvent,
     isRegistered,
-    // Note: 'registrations' is now handled implicitly via 'userEvents'
-    registrations: [],
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
