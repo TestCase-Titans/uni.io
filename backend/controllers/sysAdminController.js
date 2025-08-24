@@ -48,6 +48,6 @@ export const addSysAdmin = (req, res) => {
 
 
 export const deleteEvent = async (req, res) => {
-  console.log(`SysAdmin ${req.user.id} deleted event ${req.params.eventId}`);
+  // console.log(`SysAdmin ${req.user.id} deleted event ${req.params.eventId}`);
   return eventDelete(req, res);
 };
