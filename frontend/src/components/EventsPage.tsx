@@ -282,7 +282,7 @@ export function EventsPage({}: EventsPageProps) {
                   className={`cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-2 group border-2 hover:border-destructive/20 ${
                     viewMode === "list" ? "flex-row p-6" : ""
                   }`}
-                  onClick={() => navigate(`event-${event.id}`)}
+                  onClick={() => navigate(`/event/${event.id}`)}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {viewMode === "grid" ? (

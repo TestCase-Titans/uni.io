@@ -1,4 +1,5 @@
 import { Button } from "./ui/button";
+import { useParams } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -22,18 +23,27 @@ import { useData } from "../contexts/DataContext";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner@2.0.3";
 import { useNavigate } from "react-router-dom";
+import { LoadingScreen } from "./LoadingScreen";
 
-interface EventDetailsPageProps {
-  eventId: string;
-}
+interface EventDetailsPageProps {}
 
-export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
+export function EventDetailsPage({}: EventDetailsPageProps) {
   const navigate = useNavigate();
-  const { events, registerForEvent, unregisterFromEvent, isRegistered } =
-    useData();
+  const {
+    events,
+    registerForEvent,
+    unregisterFromEvent,
+    isRegistered,
+    isLoading,
+  } = useData();
   const { user } = useAuth();
 
-  const event = events.find((e) => e.id === eventId);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  const { eventId } = useParams<{ eventId: string }>();
+  const event = events.find((e) => e.id == eventId);
 
   if (!event) {
     return (

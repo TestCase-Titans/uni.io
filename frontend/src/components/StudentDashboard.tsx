@@ -251,7 +251,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                           </div>
                           <CardTitle
                             className="line-clamp-2 cursor-pointer hover:text-destructive"
-                            onClick={() => navigate(`event-${event.id}`)}
+                            onClick={() => navigate(`/event/${event.id}`)}
                           >
                             {event.title}
                           </CardTitle>
@@ -315,7 +315,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                           </div>
                           <CardTitle
                             className="line-clamp-2 cursor-pointer hover:text-destructive"
-                            onClick={() => navigate(`event-${event.id}`)}
+                            onClick={() => navigate(`/event/${event.id}`)}
                           >
                             {event.title}
                           </CardTitle>
