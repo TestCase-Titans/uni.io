@@ -251,7 +251,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                           </div>
                           <CardTitle
                             className="line-clamp-2 cursor-pointer hover:text-destructive"
-                            onClick={() => navigate(`event-${event.id}`)}
+                            onClick={() => navigate(`/event/${event.id}`)}
                           >
                             {event.title}
                           </CardTitle>
@@ -269,7 +269,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                             </div>
                             <div className="flex items-center text-muted-foreground">
                               <MapPin className="h-4 w-4 mr-2" />
-                              {event.location}
+                              {event.address}
                             </div>
                             <div className="flex items-center text-muted-foreground">
                               <Users className="h-4 w-4 mr-2" />
@@ -315,7 +315,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                           </div>
                           <CardTitle
                             className="line-clamp-2 cursor-pointer hover:text-destructive"
-                            onClick={() => navigate(`event-${event.id}`)}
+                            onClick={() => navigate(`/event/${event.id}`)}
                           >
                             {event.title}
                           </CardTitle>
@@ -328,7 +328,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                             </div>
                             <div className="flex items-center text-muted-foreground">
                               <MapPin className="h-4 w-4 mr-2" />
-                              {event.location}
+                              {event.address}
                             </div>
                           </div>
                           <Button

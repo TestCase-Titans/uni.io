@@ -295,7 +295,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
                             </TableCell>
                             <TableCell className="max-w-xs">
                               <div className="truncate text-sm">
-                                {event.location}
+                                {event.address}
                               </div>
                             </TableCell>
                             <TableCell>
@@ -328,7 +328,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => navigate(`event-${event.id}`)}
+                                  onClick={() => navigate(`/event-${event.id}`)}
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
@@ -336,7 +336,7 @@ export function AdminDashboard({}: AdminDashboardProps) {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() =>
-                                    navigate(`edit-event-${event.id}`)
+                                    navigate(`/edit-event-${event.id}`)
                                   }
                                 >
                                   <Edit className="h-4 w-4" />
