@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -6,6 +6,8 @@ import { DataProvider } from "./contexts/DataContext";
 import { Navigation } from "./components/Navigation";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { PageRouter } from "./components/PageRouter";
+import Chatbot from "./components/Chatbot";
+import GeminiTest from "./components/GeminiTest";
 import {
   getNavigationTarget,
   getDefaultDashboard,
@@ -49,6 +51,9 @@ function AppContent() {
       </main>
       <ToastContainer />
       <Toaster />
+      <Chatbot />
+      {/* Uncomment the line below to test the Gemini API key */}
+      {/* <GeminiTest /> */}
     </div>
   );
 }
