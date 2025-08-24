@@ -16,6 +16,7 @@ export interface BackendUser {
   username: string;
   isSysAdmin: boolean | 0 | 1; // Handle both boolean and number
   clubAdminStatus: "never_applied" | "pending" | "accepted" | "rejected";
+  img_url?: string;
 }
 
 export interface User extends BackendUser {

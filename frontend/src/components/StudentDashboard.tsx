@@ -121,7 +121,7 @@ export function StudentDashboard({}: StudentDashboardProps) {
                 onClick={() => navigate("/settings")}
               >
                 <Settings className="h-4 w-4 mr-3" />
-                Settings
+                Profile
               </Button>
             </nav>
 
