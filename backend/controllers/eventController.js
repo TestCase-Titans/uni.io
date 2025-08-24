@@ -18,37 +18,39 @@ export const createEvent = (req, res) => {
     image_url,
   } = req.body;
 
-  // Use logged-in clubAdmin's name as organizer
   const organizer = req.user.name;
 
-  const query = `
-    INSERT INTO clubEvents
-      (title, organizer, description, event_date, event_time, duration, category, address, room, registration_deadline, capacity, image_url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  const start = new Date(`${event_date}T${event_time}`);
+  const end = new Date(start.getTime() + duration * 60000); // duration in minutes
+
+  const conflictQuery = `
+    SELECT * FROM clubEvents 
+    WHERE address = ? AND room = ? AND event_date = ? 
+      AND ((event_time <= ? AND ADDTIME(event_time, SEC_TO_TIME(duration*60)) > ?) 
+        OR (event_time < ? AND ADDTIME(event_time, SEC_TO_TIME(duration*60)) >= ?))
   `;
 
-  db.query(
-    query,
-    [
-      title,
-      organizer,
-      description,
-      event_date,
-      event_time,
-      duration,
-      category,
-      address,
-      room,
-      registration_deadline,
-      capacity,
-      image_url,
-    ],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ message: "Event created successfully", eventId: result.insertId });
-    }
-  );
+  db.query(conflictQuery, [address, room, event_date, event_time, event_time, event_time, event_time], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length > 0) return res.status(400).json({ message: "Room is already booked for this time" });
+
+    const query = `
+      INSERT INTO clubEvents
+        (title, organizer, description, event_date, event_time, duration, category, address, room, registration_deadline, capacity, image_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      query,
+      [title, organizer, description, event_date, event_time, duration, category, address, room, registration_deadline, capacity, image_url],
+      (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ message: "Event created successfully", eventId: result.insertId });
+      }
+    );
+  });
 };
+
 
 // Update Event (only by clubAdmin who created it)
 export const updateEvent = (req, res) => {
@@ -142,17 +144,32 @@ export const registerForEvent = (req, res) => {
     return res.status(403).json({ message: "Club admins cannot register for events" });
   }
 
-  const query = "INSERT INTO event_registrants (user_id, event_id) VALUES (?, ?)";
-  db.query(query, [userId, eventId], (err, result) => {
-    if (err) {
-      if (err.code === "ER_DUP_ENTRY") {
-        return res.status(400).json({ message: "Already registered" });
-      }
-      return res.status(500).json({ error: err.message });
+  const now = new Date();
+
+  const checkQuery = "SELECT registration_deadline FROM clubEvents WHERE id = ?";
+  db.query(checkQuery, [eventId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ message: "Event not found" });
+
+    const deadline = new Date(results[0].registration_deadline);
+    if (now > deadline) {
+      return res.status(403).json({ message: "Registration deadline has passed" });
     }
-    res.json({ message: "Registered successfully" });
+
+    // Proceed with registration
+    const insertQuery = "INSERT INTO event_registrants (user_id, event_id) VALUES (?, ?)";
+    db.query(insertQuery, [userId, eventId], (err, result) => {
+      if (err) {
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.status(400).json({ message: "Already registered" });
+        }
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: "Registered successfully" });
+    });
   });
 };
+
 
 // Unregister from event
 export const unregisterFromEvent = (req, res) => {
