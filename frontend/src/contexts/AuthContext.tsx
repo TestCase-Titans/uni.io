@@ -20,11 +20,15 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ) => Promise<void>;
   logout: () => Promise<void>;
 }
 
-export type UserRole = "student" | "ClubAdmin" | "admin";
+export type UserRole = "student" | "clubAdmin" | "sysAdmin";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

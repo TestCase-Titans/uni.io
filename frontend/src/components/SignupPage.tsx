@@ -237,9 +237,9 @@ export function SignupPage({ onNavigate }: SignupPageProps) {
                 {/* Club Admin Button (Red) */}
                 <Button
                   type="button"
-                  onClick={() => setRole("ClubAdmin")}
+                  onClick={() => setRole("clubAdmin")}
                   className={`flex items-center justify-center space-x-2 p-6 rounded-lg font-bold text-lg transition-all
-      ${role === "ClubAdmin"
+      ${role === "clubAdmin"
                       ? "bg-red-600 text-white shadow-lg scale-105 hover:bg-red-700 active:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 dark:active:bg-red-800"
                       : "bg-red-100 text-red-600 hover:bg-red-200 active:bg-red-300 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800 dark:active:bg-red-700"}`}
                   disabled={isLoading}
