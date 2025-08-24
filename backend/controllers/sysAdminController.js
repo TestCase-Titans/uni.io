@@ -56,9 +56,12 @@ export const approveClubAdmin = (req, res) => {
 
 export const addSysAdmin = (req, res) => {
   const { userId } = req.params;
+  const id = parseInt(userId, 10); 
+
+  if (!id) return res.status(400).json({ message: "Invalid user id" });
 
   const query = "UPDATE users SET isSysAdmin = 1 WHERE id = ?";
-  db.query(query, [userId], (err, result) => {
+  db.query(query, [id], (err, result) => {
     if (err) return res.status(500).json({ message: "DB error" });
     if (result.affectedRows === 0) return res.status(404).json({ message: "User not found" });
 
