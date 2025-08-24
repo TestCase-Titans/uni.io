@@ -41,6 +41,7 @@ The platform serves as a central hub where:
 - **MySQL** 8.0 or higher
 - **Git** for version control
 - **npm** or **yarn** package manager
+- Contact dev.pabak@gmail.com or md.iftekharzawad@gmail.com for assistance or .env file
 
 ### Installation
 
