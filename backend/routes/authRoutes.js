@@ -10,8 +10,9 @@ import {
 const router = Router();
 
 router.post("/register", register);
-//                    middleware
-router.post("/login", passport.authenticate("local"), login);
+
+router.post("/login", login);
+
 router.get("/logout", logout);
 
 const isAuthenticated = (req, res, next) => {
@@ -25,6 +26,7 @@ router.get("/status", isAuthenticated, (req, res) => {
   // req.user is populated by Passport if the session is valid
   const userResponse = { ...req.user };
   delete userResponse.password; // dont send password hash
+  console.log("user auth;");
   res.json({ user: userResponse });
 });
 

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import passport from "passport";
 import db from "../config/db.js";
 
 export const register = async (req, res) => {
@@ -20,7 +21,14 @@ export const register = async (req, res) => {
 
     db.query(
       userQuery,
-      [name, username, email, hashedPassword, clubAdminStatus, verificationToken],
+      [
+        name,
+        username,
+        email,
+        hashedPassword,
+        clubAdminStatus,
+        verificationToken,
+      ],
       (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
 
@@ -51,18 +59,47 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {
-  if (req.user.isBanned) {
-    return res.status(403).json({ message: "Your account is banned." });
-  }
-  if (!req.user.isVerified) {
-    return res.status(403).json({ message: "Please verify your email first." });
-  }
+export const login = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    // handle  passport errors
+    if (err) {
+      return next(err);
+    }
 
-  const userResponse = { ...req.user };
-  delete userResponse.password;
+    // handle authentication errors
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: info.message || "Invalid credentials" });
+    }
 
-  res.json({ message: "Logged in successfully", user: userResponse });
+    // banner
+    if (user.isBanned) {
+      return res.status(403).json({ message: "Your account is banned." });
+    }
+
+    // not verified
+    if (!user.isVerified) {
+      return res
+        .status(403)
+        .json({ message: "Please verify your email first." });
+    }
+
+    // all ok
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+
+      const userResponse = { ...user.dataValues };
+      delete userResponse.password;
+
+      return res.json({
+        message: "Logged in successfully",
+        user: userResponse,
+      });
+    });
+  })(req, res, next);
 };
 
 export const logout = (req, res, next) => {
