@@ -1,8 +1,10 @@
-import React, { useState } from "react"
-import { Button } from "./ui/button"
-import { ThemeToggle } from "./ThemeToggle"
-import { Menu, X, Zap } from "lucide-react"
-import { useAuth } from "../contexts/AuthContext"
+
+import React, { useState } from 'react'
+import { Button } from './ui/button'
+import { ThemeToggle } from './ThemeToggle'
+import { Menu, X, Zap } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+
 
 interface NavigationProps {
   onNavigate: (page: string) => void
