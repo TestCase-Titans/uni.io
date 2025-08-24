@@ -27,24 +27,27 @@ app.use(
 
 app.use(express.json());
 
+const isProduction = process.env.NODE_ENV === "production";
 const sessionStore = new (MySQLStore(session))({}, db);
 
 app.use(
   session({
-    secret: "secretKey",
+    secret: process.env.SESSION_SECRET || "secretKey", // Always use a secret from .env
     resave: false,
     saveUninitialized: false,
-    store: sessionStore, // Use the persistent MySQL store
+    store: sessionStore,
     cookie: {
-      secure: true, // required for SameSite=None
-      sameSite: "none", // allow cross-domain cookies
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // cookie lasts 1 day
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
 );
 
-app.set("trust proxy", 1);
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
 
 configurePassport(passport);
 app.use(passport.initialize());
