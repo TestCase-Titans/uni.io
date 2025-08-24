@@ -18,7 +18,7 @@ export default function App() {
             <AppRoutes />
           </main>
           <ToastContainer />
-          <Toaster />
+          {/* <Toaster /> */}
           <Chatbot />
         </DataProvider>
       </AuthProvider>
