@@ -91,6 +91,13 @@ export const login = (req, res, next) => {
         return next(err);
       }
 
+      if (req.body.rememberMe) {
+        const time = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
+        req.session.cookie.maxAge = time;
+      } else {
+        req.session.cookie.expires = false;
+      }
+
       const userResponse = { ...user.dataValues };
       delete userResponse.password;
 

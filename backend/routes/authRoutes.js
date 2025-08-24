@@ -26,7 +26,7 @@ router.get("/status", isAuthenticated, (req, res) => {
   // req.user is populated by Passport if the session is valid
   const userResponse = { ...req.user };
   delete userResponse.password; // dont send password hash
-  console.log("user auth;");
+  // console.log("user auth;");
   res.json({ user: userResponse });
 });
 

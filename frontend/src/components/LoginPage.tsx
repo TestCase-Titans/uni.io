@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import apiClient from "../utils/api";
 import { Checkbox } from "./ui/checkbox";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Loader2, Zap, ArrowRight } from "lucide-react";
@@ -36,7 +35,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     }
 
     try {
-      const result = await login(email, password);
+      const result = await login(email, password, rememberMe);
     } catch (err) {
       setError("An error occurred. Please try again.");
     }

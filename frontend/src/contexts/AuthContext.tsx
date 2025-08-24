@@ -32,11 +32,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Start loading initially
 
-  const login = async (email: string, password: string) => {
+  const login = async (
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ) => {
     try {
       const userData = {
         email,
         password,
+        rememberMe,
       };
 
       const response = await apiClient.post("/auth/login", userData);
