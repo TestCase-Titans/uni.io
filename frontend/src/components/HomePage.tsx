@@ -152,7 +152,7 @@ export function HomePage({}: HomePageProps) {
               <Card
                 key={event.id}
                 className="cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-2 group border-2 hover:border-destructive/20"
-                onClick={() => navigate(`event-${event.id}`)}
+                onClick={() => navigate(`/event-${event.id}`)}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardHeader className="relative">
@@ -187,7 +187,7 @@ export function HomePage({}: HomePageProps) {
                     </div>
                     <div className="flex items-center text-muted-foreground font-medium">
                       <MapPin className="h-4 w-4 mr-2 text-destructive" />
-                      {event.location}
+                      {event.address}
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-border">

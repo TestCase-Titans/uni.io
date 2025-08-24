@@ -1,4 +1,5 @@
 import { Button } from "./ui/button";
+import { useParams } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -22,18 +23,27 @@ import { useData } from "../contexts/DataContext";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner@2.0.3";
 import { useNavigate } from "react-router-dom";
+import { LoadingScreen } from "./LoadingScreen";
 
-interface EventDetailsPageProps {
-  eventId: string;
-}
+interface EventDetailsPageProps {}
 
-export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
+export function EventDetailsPage({}: EventDetailsPageProps) {
   const navigate = useNavigate();
-  const { events, registerForEvent, unregisterFromEvent, isRegistered } =
-    useData();
+  const {
+    events,
+    registerForEvent,
+    unregisterFromEvent,
+    isRegistered,
+    isLoading,
+  } = useData();
   const { user } = useAuth();
 
-  const event = events.find((e) => e.id === eventId);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  const { eventId } = useParams<{ eventId: string }>();
+  const event = events.find((e) => e.id == eventId);
 
   if (!event) {
     return (
@@ -125,7 +135,7 @@ export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
       endDate
     )}&details=${encodeURIComponent(
       event.description
-    )}&location=${encodeURIComponent(event.location)}`;
+    )}&location=${encodeURIComponent(event.address)}`;
 
     window.open(calendarUrl, "_blank");
   };
@@ -197,7 +207,7 @@ export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
                         })}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        at {event.time}
+                        at {event.time} until {event.endTime}
                       </p>
                     </div>
                   </div>
@@ -205,7 +215,7 @@ export function EventDetailsPage({ eventId }: EventDetailsPageProps) {
                   <div className="flex items-center">
                     <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{event.location}</p>
+                      <p className="font-medium">{event.address}</p>
                       <p className="text-sm text-muted-foreground">
                         Event location
                       </p>
