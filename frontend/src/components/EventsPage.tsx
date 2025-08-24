@@ -29,11 +29,11 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useData } from "../contexts/DataContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-interface EventsPageProps {}
+interface EventsPageProps { }
 
-export function EventsPage({}: EventsPageProps) {
+export function EventsPage({ }: EventsPageProps) {
   const navigate = useNavigate();
   const { events } = useData();
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,6 +41,12 @@ export function EventsPage({}: EventsPageProps) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = 6; // number of events per page
+
+
+
 
   const filteredAndSortedEvents = useMemo(() => {
     let filtered = events.filter((event) => {
@@ -73,6 +79,18 @@ export function EventsPage({}: EventsPageProps) {
 
     return filtered;
   }, [events, searchQuery, categoryFilter, statusFilter, sortBy]);
+
+  const paginatedEvents = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    return filteredAndSortedEvents.slice(start, end);
+  }, [filteredAndSortedEvents, currentPage]);
+
+  const goToPage = (page: number) => {
+    setSearchParams({ page: page.toString() });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
 
   const categories = Array.from(new Set(events.map((event) => event.category)));
 
@@ -151,14 +169,22 @@ export function EventsPage({}: EventsPageProps) {
                   <Input
                     placeholder="Search events, clubs, keywords..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setSearchParams({ page: "1" }); // reset page
+                    }}
+
                     className="pl-10 font-medium"
                   />
                 </div>
               </div>
 
               {/* Category Filter */}
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <Select value={categoryFilter} onValueChange={(value) => {
+                setCategoryFilter(value);
+                setSearchParams({ page: "1" });
+              }}
+              >
                 <SelectTrigger className="font-medium">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Category" />
@@ -270,7 +296,7 @@ export function EventsPage({}: EventsPageProps) {
                 : "space-y-4"
             }
           >
-            {filteredAndSortedEvents.map((event, index) => {
+            {paginatedEvents.map((event, index) => {
               const popularityBadge = getPopularityBadge(
                 event.registered,
                 event.capacity
@@ -279,9 +305,8 @@ export function EventsPage({}: EventsPageProps) {
               return (
                 <Card
                   key={event.id}
-                  className={`cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-2 group border-2 hover:border-destructive/20 ${
-                    viewMode === "list" ? "flex-row p-6" : ""
-                  }`}
+                  className={`cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-2 group border-2 hover:border-destructive/20 ${viewMode === "list" ? "flex-row p-6" : ""
+                    }`}
                   onClick={() => navigate(`/event/${event.id}`)}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -417,6 +442,23 @@ export function EventsPage({}: EventsPageProps) {
             })}
           </div>
         )}
+
+        <div className="flex justify-center mt-8 space-x-2">
+              {Array.from({ length: Math.ceil(filteredAndSortedEvents.length / pageSize) }).map((_, index) => {
+                const page = index + 1;
+                return (
+                  <Button
+                    key={page}
+                    size="sm"
+                    variant={page === currentPage ? "default" : "outline"}
+                    onClick={() => goToPage(page)}
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
+            </div>
+        
       </div>
     </div>
   );
