@@ -37,7 +37,7 @@ export function Navigation() {
     setMobileMenuOpen(false);
   };
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border/50">

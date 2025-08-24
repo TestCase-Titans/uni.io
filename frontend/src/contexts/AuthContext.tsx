@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await apiClient.post("/auth/login", userData);
       const backendUser: BackendUser = response.data.user;
 
-      console.log("Backend user data on LOGIN:", backendUser);
+      // console.log("Backend user data on LOGIN:", backendUser);
 
       if (backendUser.clubAdminStatus === "pending") {
         throw new Error("Your club admin application is pending approval.");
@@ -129,11 +129,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await apiClient.get("/auth/status");
       const backendUser: BackendUser = response.data.user;
 
-      console.log("Backend user data on REFRESH:", backendUser);
+      // console.log("Backend user data on REFRESH:", backendUser);
 
       const processedUser = processUser(backendUser);
 
-      console.log("Processed user on REFRESH:", processedUser);
+      //console.log("Processed user on REFRESH:", processedUser);
 
       setUser(processedUser);
     } catch (error) {
