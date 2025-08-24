@@ -100,7 +100,7 @@ export const getMyEvents = (req, res) => {
 
   const query = `
     SELECT *,
-      (SELECT COUNT(*) FROM event_registrants WHERE event_id = clubEvents.id) AS registeredCount
+      (SELECT COUNT(*) FROM eventRegistrants WHERE event_id = clubEvents.id) AS registeredCount
     FROM clubEvents
     WHERE organizer = ?
   `;
@@ -157,7 +157,7 @@ export const registerForEvent = (req, res) => {
     }
 
     // Proceed with registration
-    const insertQuery = "INSERT INTO event_registrants (user_id, event_id) VALUES (?, ?)";
+    const insertQuery = "INSERT INTO eventRegistrants (user_id, event_id) VALUES (?, ?)";
     db.query(insertQuery, [userId, eventId], (err, result) => {
       if (err) {
         if (err.code === "ER_DUP_ENTRY") {
@@ -176,7 +176,7 @@ export const unregisterFromEvent = (req, res) => {
   const userId = req.user.id;
   const eventId = req.params.id;
 
-  const query = "DELETE FROM event_registrants WHERE user_id = ? AND event_id = ?";
+  const query = "DELETE FROM eventRegistrants WHERE user_id = ? AND event_id = ?";
   db.query(query, [userId, eventId], (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     if (result.affectedRows === 0)
@@ -191,7 +191,7 @@ export const getParticipatedEvents = (req, res) => {
   const query = `
     SELECT e.* 
     FROM clubEvents e
-    JOIN event_registrants er ON e.id = er.event_id
+    JOIN eventRegistrants er ON e.id = er.event_id
     WHERE er.user_id = ?
   `;
   db.query(query, [userId], (err, results) => {

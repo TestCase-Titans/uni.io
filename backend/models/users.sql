@@ -1,8 +1,8 @@
--- DROP database if exists defaultdb;
+DROP database if exists defaultdb;
 CREATE DATABASE IF NOT EXISTS defaultdb;
 USE defaultdb;
 
-DROP TABLE IF EXISTS event_registrants;
+DROP TABLE IF EXISTS eventRegistrants;
 DROP TABLE IF EXISTS clubEvents;
 DROP TABLE IF EXISTS clubAdminApplications;
 DROP TABLE IF EXISTS users;
@@ -17,16 +17,18 @@ CREATE TABLE users (
     isSysAdmin BOOLEAN DEFAULT FALSE,
     isVerified BOOLEAN DEFAULT FALSE,
     clubAdminStatus ENUM('never_applied', 'pending', 'accepted', 'rejected') DEFAULT 'never_applied',
-    verificationToken VARCHAR(255) DEFAULT NULL
+    verificationToken VARCHAR(255) DEFAULT NULL,
+    img_url VARCHAR(500) DEFAULT NULL
 );
 
-INSERT INTO users (name, username, email, password, isBanned, isSysAdmin, isVerified, clubAdminStatus)
+INSERT INTO users (name, username, email, password, isBanned, isSysAdmin, isVerified, clubAdminStatus, img_url)
 VALUES 
-('Alice Smith', 'alice', 'alice@example.com', 'hashed_pw_123', FALSE, FALSE, TRUE, 'accepted'),
-('Bob Johnson', 'bobby', 'bob@example.com', 'hashed_pw_456', FALSE, FALSE, TRUE, 'never_applied'),
-('Charlie Brown', 'charlie', 'charlie@example.com', 'hashed_pw_789', TRUE, FALSE, TRUE, 'rejected'),
-('Admin One', 'admin1', 'admin1@example.com', 'hashed_admin_pw', FALSE, TRUE, TRUE, 'accepted'),
-('Super Admin', 'superadmin', 'superadmin@example.com', 'hashed_super_pw', FALSE, TRUE, TRUE, 'accepted');
+('Alice Smith', 'alice', 'alice@example.com', 'hashed_pw_123', FALSE, FALSE, TRUE, 'accepted', 'https://example.com/images/alice.jpg'),
+('Bob Johnson', 'bobby', 'bob@example.com', 'hashed_pw_456', FALSE, FALSE, TRUE, 'never_applied', 'https://example.com/images/bob.jpg'),
+('Charlie Brown', 'charlie', 'charlie@example.com', 'hashed_pw_789', TRUE, FALSE, TRUE, 'rejected', 'https://example.com/images/charlie.jpg'),
+('Admin One', 'admin1', 'admin1@example.com', 'hashed_admin_pw', FALSE, TRUE, TRUE, 'accepted', 'https://example.com/images/admin1.jpg'),
+('Super Admin', 'superadmin', 'superadmin@example.com', 'hashed_super_pw', FALSE, TRUE, TRUE, 'accepted', 'https://example.com/images/superadmin.jpg');
+
 
 CREATE TABLE clubAdminApplications (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -90,7 +92,7 @@ VALUES
  '2025-09-08 23:59:59', 75, 'https://example.com/images/career_event.jpg', 60);
 
 
-CREATE TABLE event_registrants (
+CREATE TABLE eventRegistrants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
@@ -105,30 +107,31 @@ CREATE TABLE event_registrants (
 );
 
 -- User with id 1 registers for event with id 3
-INSERT INTO event_registrants (user_id, event_id) VALUES (1, 3);
+INSERT INTO eventRegistrants (user_id, event_id) VALUES (1, 3);
 
 -- User 2 registers for event 1
-INSERT INTO event_registrants (user_id, event_id) VALUES (2, 1);
+INSERT INTO eventRegistrants (user_id, event_id) VALUES (2, 1);
 
 -- User 1 registers for event 1
-INSERT INTO event_registrants (user_id, event_id) VALUES (1, 1);
+INSERT INTO eventRegistrants (user_id, event_id) VALUES (1, 1);
 
 
 
 SELECT * FROM users;
 SELECT * FROM clubAdminApplications;
 SELECT * FROM clubEvents;
+SELECT * FROM eventRegistrants;
 
 -- List all users registered for a specific event (event_id = 1)
 SELECT u.id, u.name, u.email
 FROM users u
-JOIN event_registrants ep ON u.id = ep.user_id
+JOIN eventRegistrants ep ON u.id = ep.user_id
 WHERE ep.event_id = 1;
 
 -- List all events a user (user_id = 1) registered for
 SELECT ep.id AS uid, e.id AS event_id, e.title, e.event_date
 FROM clubEvents e
-JOIN event_registrants ep ON e.id = ep.event_id
+JOIN eventRegistrants ep ON e.id = ep.event_id
 WHERE ep.user_id = 1;
 
 
