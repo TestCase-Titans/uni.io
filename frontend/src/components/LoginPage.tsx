@@ -89,7 +89,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your.awesome.email@university.edu"
+                  placeholder="example@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
@@ -107,7 +107,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Your secret password"
+                  placeholder="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
@@ -171,7 +171,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
           </CardContent>
         </Card>
 
-        <div className="text-center mt-8 p-4 bg-muted/50 rounded-lg border border-border">
+        {/* <div className="text-center mt-8 p-4 bg-muted/50 rounded-lg border border-border">
           <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">
             DEMO ACCOUNTS
           </p>
@@ -181,7 +181,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
             <br />
             <strong>Password:</strong> anything works! 🎉
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

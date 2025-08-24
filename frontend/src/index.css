@@ -78,6 +78,18 @@
   }
 }
 
+/* Dark mode autofill fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-internal-autofill-selected {
+  -webkit-text-fill-color: #f1f5f9; /* text color in dark mode */
+  -webkit-box-shadow: 0 0 0px 1000px #1e293b inset; /* dark bg */
+  box-shadow: 0 0 0px 1000px #1e293b inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
 @layer theme {
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -404,6 +416,7 @@
   ::-webkit-outer-spin-button {
     height: auto;
   }
+  
 
   [hidden]:where(:not([hidden="until-found"])) {
     display: none !important;
