@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import session from "express-session";
 import passport from "passport";
 import MySQLStore from "express-mysql-session";
-import "./config/db.js";
+import db from "./config/db.js";
 import configurePassport from "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
